@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ClearStep · Make homework directions clearer</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="ClearStep home"><span class="brand-mark">✓</span><span>Clear<span>Step</span></span></a>
+    <div class="privacy-note"><span class="lock">▣</span> Private by design</div>
+  </header>
+
+  <main class="page-shell">
+    <section class="hero" aria-labelledby="page-title">
+      <div class="eyebrow">Homework direction helper</div>
+      <h1 id="page-title">Turn confusing directions<br><em>into clear next steps.</em></h1>
+      <p class="hero-copy">ClearStep explains what your assignment is asking—without doing the work for you.</p>
+    </section>
+
+    <section class="workspace" aria-label="Explain homework instructions">
+      <div class="input-card card">
+        <div class="card-heading"><div><span class="step-number">1</span><h2>Paste your directions</h2></div><span class="optional">No personal information</span></div>
+        <label for="instructions" class="sr-only">Homework instructions</label>
+        <textarea id="instructions" maxlength="12000" placeholder="Example: Read pages 42–48. In your notebook, write three details that show how the main character changes. Use a quote for each detail."></textarea>
+        <div class="input-footer"><span id="char-count">0 / 12,000</span><button id="explain-button" class="primary-button" type="button"><span>Explain it</span><span class="arrow">→</span></button></div>
+        <p class="safety-hint"><span>ⓘ</span> ClearStep explains directions only. Your teacher’s instructions always come first.</p>
+      </div>
+
+      <div class="connector" aria-hidden="true"><span>↓</span></div>
+
+      <div class="result-card card" aria-live="polite">
+        <div class="card-heading"><div><span class="step-number pale">2</span><h2>See your clear steps</h2></div><span id="saved-label" class="saved-label">Saved on this device</span></div>
+        <div id="result-empty" class="result-empty"><div class="spark">✦</div><p>Your explanation will appear here.</p><span>Paste your directions above, then choose Explain it.</span></div>
+        <div id="result-loading" class="result-loading" hidden><div class="loader"></div><p>Thinking…</p><span>Reading your directions carefully</span></div>
+        <div id="result-content" class="result-content" hidden></div>
+      </div>
+    </section>
+
+    <section class="difference" aria-label="What makes ClearStep different">
+      <div class="difference-title"><span class="eyebrow">The ClearStep difference</span><h2>Understand the task.<br><em>Do the learning.</em></h2></div>
+      <div class="difference-points"><div><span class="point-icon">◎</span><p><strong>Directions, not answers.</strong><br>It breaks down what to do without completing your homework.</p></div><div><span class="point-icon">✦</span><p><strong>Made for your assignment.</strong><br>It uses the exact directions you provide.</p></div><div><span class="point-icon">♡</span><p><strong>Teacher-first.</strong><br>If something is unclear, it reminds you to ask your teacher.</p></div></div>
+    </section>
+  </main>
+  <footer><span>ClearStep · A student project for the Presidential SI Challenge</span><span>Always check your teacher’s original directions.</span></footer>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

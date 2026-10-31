@@ -1,0 +1,9 @@
+{
+  "name": "clearstep",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Clear homework instructions for middle school students",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
