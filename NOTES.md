@@ -17,6 +17,7 @@ Then open http://localhost:3000 in your browser.
 - The server reads the OpenAI key only from `.env`; the browser never receives it.
 - The server sends `BRIEF.md` as the AI system instructions for every explanation request.
 - The OpenAI model is `gpt-4o-mini`.
+- Models available to this key with “luna” in the name: `gpt-5.6-luna` and `gpt-6-luna`.
 - The button shows “Thinking…” while waiting and is disabled to prevent double requests.
 - Friendly error text appears when the key or internet connection does not work.
 - Explanations are saved in localStorage with made-up sample data support, so data stays in this browser for now.
