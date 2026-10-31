@@ -6,8 +6,17 @@ const charCount = document.querySelector('#char-count');
 const resultEmpty = document.querySelector('#result-empty');
 const resultLoading = document.querySelector('#result-loading');
 const resultContent = document.querySelector('#result-content');
+const exampleButton = document.querySelector('#example-button');
+
+const EXAMPLE_INSTRUCTIONS = 'Read pages 42–48. In your notebook, write three details that show how the main character changes. Use a quote for each detail.';
 
 function updateCount() { charCount.textContent = `${instructionsInput.value.length.toLocaleString()} / 12,000`; }
+
+exampleButton.addEventListener('click', () => {
+  instructionsInput.value = EXAMPLE_INSTRUCTIONS;
+  updateCount();
+  instructionsInput.focus();
+});
 
 function showResult(result) {
   resultEmpty.hidden = true;
