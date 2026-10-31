@@ -2,17 +2,13 @@
 
 ## How to run it
 
-From this folder, run:
-
-```bash
-npm start
-```
-
-Then open http://localhost:3000 in your browser. On this computer, the equivalent bundled-runtime command is:
+From this folder, run this one command:
 
 ```bash
 /Users/ruitian/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node server.js
 ```
+
+Then open http://localhost:3000 in your browser.
 
 ## What is done
 
