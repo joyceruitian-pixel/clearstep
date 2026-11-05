@@ -1,4 +1,6 @@
 const STORAGE_KEY = 'clearstep-saved-explanations';
+const FOCUS_KEY = 'clearstep-focus-progress';
+const REQUIREMENTS_KEY = 'clearstep-requirement-checks';
 
 const SAMPLE_ITEMS = [
   { instructions: 'Read pages 42–48 and write three details about how the main character changes.', result: 'Practice example: Read the assigned pages, notice changes in the character, and write three details. Ask your teacher if a page number or format is unclear.', sample: true },
@@ -18,4 +20,28 @@ export function loadSavedExplanations() {
 export function saveExplanation(item) {
   const saved = loadSavedExplanations().filter((entry) => !entry.sample);
   localStorage.setItem(STORAGE_KEY, JSON.stringify([item, ...saved].slice(0, 5)));
+}
+
+export function loadFocusProgress(steps) {
+  try {
+    const saved = JSON.parse(localStorage.getItem(FOCUS_KEY));
+    if (saved?.signature === steps.join('|')) return { index: saved.index || 0, completed: saved.completed || [] };
+  } catch {}
+  return { index: 0, completed: [] };
+}
+
+export function saveFocusProgress(steps, progress) {
+  localStorage.setItem(FOCUS_KEY, JSON.stringify({ signature: steps.join('|'), ...progress }));
+}
+
+export function loadRequirementChecks(requirements) {
+  try {
+    const saved = JSON.parse(localStorage.getItem(REQUIREMENTS_KEY));
+    if (saved?.signature === requirements.join('|')) return saved.checked || [];
+  } catch {}
+  return [];
+}
+
+export function saveRequirementChecks(requirements, checked) {
+  localStorage.setItem(REQUIREMENTS_KEY, JSON.stringify({ signature: requirements.join('|'), checked }));
 }
