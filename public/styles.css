@@ -24,4 +24,5 @@ body::before { content: ""; position: fixed; inset: 0; pointer-events: none; opa
 .answer-section + .answer-section { border-top: 1px solid var(--line); margin-top: 18px; padding-top: 16px; }
 .answer-section h3 { margin: 0 0 7px; color: var(--teal-dark); font-size: .78rem; letter-spacing: .02em; text-transform: uppercase; }
 .answer-section p, .answer-section ol { margin: 0; }.answer-section p { line-height: 1.6; }.answer-section ol { padding-left: 23px; }.answer-section li { padding: 3px 0 3px 4px; line-height: 1.5; }.answer-section li::marker { color: var(--teal); font-weight: 800; }
+.result-actions { display: flex; align-items: center; gap: 10px; margin-top: 18px; }.result-actions .secondary-button { padding: 9px 12px; font-size: .72rem; }.result-actions span { color: #548b7a; font-size: .73rem; font-weight: 700; }
 @media (min-width: 701px) { .hero h1 { font-size: clamp(3.2rem, 7vw, 5.15rem); } }

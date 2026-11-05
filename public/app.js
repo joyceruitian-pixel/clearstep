@@ -7,6 +7,9 @@ const charCount = document.querySelector('#char-count');
 const resultEmpty = document.querySelector('#result-empty');
 const resultLoading = document.querySelector('#result-loading');
 const resultContent = document.querySelector('#result-content');
+const resultActions = document.querySelector('#result-actions');
+const copyButton = document.querySelector('#copy-button');
+const copyStatus = document.querySelector('#copy-status');
 const exampleButtons = document.querySelectorAll('[data-example]');
 const explainLabel = document.querySelector('#explain-label');
 const savedLabel = document.querySelector('#saved-label');
@@ -19,6 +22,7 @@ const EXAMPLES = {
 };
 
 let isLoading = false;
+let latestResult = null;
 
 function updateCount() {
   charCount.textContent = `${instructionsInput.value.length.toLocaleString()} / 12,000`;
@@ -55,6 +59,8 @@ function showResult(result, isError = false) {
   resultLoading.hidden = true;
   resultContent.hidden = false;
   resultContent.classList.toggle('error-result', isError);
+  resultActions.hidden = isError;
+  copyStatus.textContent = '';
   resultContent.replaceChildren();
   if (isError || typeof result === 'string') {
     resultContent.textContent = result;
@@ -66,14 +72,32 @@ function showResult(result, isError = false) {
   addResultSection('Things to ask your teacher', result.missingInformation, 'list');
 }
 
+function resultToText(result) {
+  if (typeof result === 'string') return result;
+  const lines = [`What your assignment means: ${result.summary}`, '', 'Steps to follow:', ...result.steps.map((step, index) => `${index + 1}. ${step}`)];
+  if (result.importantRequirements.length) lines.push('', 'Important requirements:', ...result.importantRequirements.map((item) => `- ${item}`));
+  if (result.missingInformation.length) lines.push('', 'Things to ask your teacher:', ...result.missingInformation.map((item) => `- ${item}`));
+  return lines.join('\n');
+}
+
 instructionsInput.addEventListener('input', updateCount);
 clearButton.addEventListener('click', () => {
   instructionsInput.value = '';
   resultContent.hidden = true;
   resultEmpty.hidden = false;
   savedLabel.textContent = 'Your device only';
+  resultActions.hidden = true;
   updateCount();
   instructionsInput.focus();
+});
+copyButton.addEventListener('click', async () => {
+  const text = resultToText(latestResult);
+  try {
+    await navigator.clipboard.writeText(text);
+    copyStatus.textContent = 'Copied!';
+  } catch {
+    copyStatus.textContent = 'Copy did not work. You can select the explanation instead.';
+  }
 });
 explainButton.addEventListener('click', async () => {
   const instructions = instructionsInput.value.trim();
@@ -83,11 +107,13 @@ explainButton.addEventListener('click', async () => {
   explainLabel.textContent = 'Thinking…';
   resultEmpty.hidden = true;
   resultContent.hidden = true;
+  resultActions.hidden = true;
   resultLoading.hidden = false;
   try {
     const response = await fetch('/api/explain', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ instructions }) });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || 'Something went wrong.');
+    latestResult = data.result;
     showResult(data.result);
     saveExplanation({ instructions, result: data.result, savedAt: new Date().toISOString() });
     savedLabel.textContent = 'Saved on this device';
@@ -100,6 +126,7 @@ const savedItems = loadSavedExplanations();
 const latestSaved = savedItems.find((item) => !item.sample);
 if (latestSaved) {
   instructionsInput.value = latestSaved.instructions;
+  latestResult = latestSaved.result;
   showResult(latestSaved.result);
   savedLabel.textContent = 'Saved on this device';
 }
