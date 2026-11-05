@@ -28,7 +28,8 @@ const EXAMPLES = {
   math: 'Solve problems 1–10 on page 76. Show your work for each problem and circle your final answers.',
   english: 'Read pages 42–48. In your notebook, write three details that show how the main character changes. Use a quote for each detail.',
   science: 'Observe a plant for five days. Record one change each day and write a short conclusion about what you noticed.',
-  history: 'Read the primary source about the town meeting. List two points of view and explain which evidence supports each one.'
+  history: 'Read the primary source about the town meeting. List two points of view and explain which evidence supports each one.',
+  spanish: 'Read the short dialogue in Spanish. Circle five words you recognize and write the main idea in English.'
 };
 
 let isLoading = false;
