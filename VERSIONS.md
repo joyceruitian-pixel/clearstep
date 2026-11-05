@@ -11,3 +11,4 @@ Round 10 | added Clear and disabled Explain until instructions are present | pre
 Round 11 | added a Copy explanation action with a confirmation message | made the useful result easy to take into a notebook or video demo
 Round 12 | added keyboard focus visibility, reduced-motion support, and live result announcements | made the main activity more accessible without adding complexity
 Round 13 | changed the hero headline and supporting text to state the problem and solution immediately | made ClearStep easier to understand at first glance
+Round 14 | updated the empty-result helper text to match the “Explain directions” button | removed a confusing old label during first use
