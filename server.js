@@ -37,13 +37,13 @@ function readBody(request) {
 }
 
 const server = http.createServer(async (request, response) => {
-  if (request.method === 'POST' && request.url === '/api/explain') {
+  if (request.method === 'POST' && (request.url === '/api/explain' || request.url === '/api/explain-simply')) {
     try {
       const payload = JSON.parse(await readBody(request));
       const instructions = typeof payload.instructions === 'string' ? payload.instructions.trim() : '';
       if (!instructions) return sendJson(response, 400, { error: 'Please paste your homework instructions first.' });
       if (instructions.length > 12000) return sendJson(response, 400, { error: 'That is a little too long. Try pasting the most important directions.' });
-      const result = await explainInstructions(instructions);
+      const result = await explainInstructions(instructions, { simpler: request.url === '/api/explain-simply' });
       return sendJson(response, 200, { result });
     } catch (error) {
       const message = error && error.code === 'OPENAI_AUTH' ? 'I could not connect to the AI. Please check the key in your .env file.' : 'I could not explain that right now. Please check your key and internet connection, then try again.';

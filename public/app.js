@@ -11,6 +11,9 @@ const completionStatus = document.querySelector('#completion-status');
 const resultActions = document.querySelector('#result-actions');
 const copyButton = document.querySelector('#copy-button');
 const copyStatus = document.querySelector('#copy-status');
+const simplifyButton = document.querySelector('#simplify-button');
+const restoreButton = document.querySelector('#restore-button');
+const simplifyStatus = document.querySelector('#simplify-status');
 const focusButton = document.querySelector('#focus-button');
 const focusPanel = document.querySelector('#focus-panel');
 const focusTitle = document.querySelector('#focus-title');
@@ -40,6 +43,7 @@ const EXAMPLES = {
 
 let isLoading = false;
 let latestResult = null;
+let originalResult = null;
 let currentSteps = [];
 let focusProgress = { index: 0, completed: [] };
 let currentAssignment = '';
@@ -131,6 +135,9 @@ function showResult(result, isError = false) {
   focusResume.hidden = true;
   focusContent.hidden = false;
   copyStatus.textContent = '';
+  simplifyStatus.textContent = '';
+  simplifyButton.hidden = isError || typeof result === 'string' || result !== originalResult;
+  restoreButton.hidden = isError || typeof result === 'string' || result === originalResult;
   resultContent.replaceChildren();
   currentSteps = [];
   if (isError || typeof result === 'string') {
@@ -225,6 +232,30 @@ copyButton.addEventListener('click', async () => {
     copyStatus.textContent = 'Copy did not work. You can select the explanation instead.';
   }
 });
+simplifyButton.addEventListener('click', async () => {
+  if (isLoading || !originalResult) return;
+  isLoading = true;
+  simplifyButton.disabled = true;
+  simplifyButton.textContent = 'Simplifying…';
+  simplifyStatus.textContent = '';
+  try {
+    const response = await fetch('/api/explain-simply', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ instructions: currentAssignment }) });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'Something went wrong.');
+    latestResult = data.result;
+    showResult(latestResult);
+  } catch (error) {
+    simplifyStatus.textContent = `I couldn't simplify that right now. ${error.message}`;
+  } finally {
+    isLoading = false;
+    simplifyButton.disabled = false;
+    simplifyButton.textContent = 'Explain more simply';
+  }
+});
+restoreButton.addEventListener('click', () => {
+  latestResult = originalResult;
+  showResult(originalResult);
+});
 explainButton.addEventListener('click', async () => {
   const instructions = instructionsInput.value.trim();
   if (!instructions) { instructionsInput.focus(); return; }
@@ -242,6 +273,7 @@ explainButton.addEventListener('click', async () => {
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || 'Something went wrong.');
     latestResult = data.result;
+    originalResult = data.result;
     currentAssignment = instructions;
     showResult(data.result);
     saveExplanation({ instructions, result: data.result, savedAt: new Date().toISOString() });
@@ -257,6 +289,7 @@ if (latestSaved) {
   instructionsInput.value = latestSaved.instructions;
   currentAssignment = latestSaved.instructions;
   latestResult = latestSaved.result;
+  originalResult = latestSaved.result;
   showResult(latestSaved.result);
   savedLabel.textContent = 'Saved on this device';
 }

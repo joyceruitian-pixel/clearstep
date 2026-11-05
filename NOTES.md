@@ -52,6 +52,12 @@ Then open http://localhost:3000 in your browser.
 - Students can mark a step complete without being moved, and reopening an assignment shows a clear Resume or Start over choice instead of silently restoring an old step.
 - Verified with a real five-step assignment in the browser and 15 automated state tests. All 15 automated tests passed.
 
+## ClearStep 3.0 polish
+
+- Added a working Explain more simply action that uses the private server-side AI route, then lets students return to the original explanation.
+- Tested the action through the real website with the saved homework example. The original explanation, simpler explanation, and return button all worked.
+- The UI-state bug found during testing was fixed before the save point.
+
 ## Stop-for-today checkpoint
 
 - What works now: ClearStep’s example, input, AI explanation, numbered steps, safety guidance, friendly errors, polished screen, and browser saving after reload.
