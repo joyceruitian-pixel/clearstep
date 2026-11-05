@@ -25,6 +25,12 @@ Then open http://localhost:3000 in your browser.
 - Saves on this computer only for now.
 - `.env` is ignored by Git.
 
+## Keep Improving progress
+
+- Completed Rounds 5–7: stronger off-topic safety, clearer privacy wording, and a more obvious “Explain directions” action.
+- Tested with made-up homework directions, an off-topic harmful request, the example button, the loading state, the AI response, and saving after reload.
+- Next change: test the wording with more middle school students and use their feedback to improve the explanations.
+
 ## Stop-for-today checkpoint
 
 - What works now: ClearStep’s example, input, AI explanation, numbered steps, safety guidance, friendly errors, polished screen, and browser saving after reload.
