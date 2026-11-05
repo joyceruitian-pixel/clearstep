@@ -14,19 +14,20 @@ Then open http://localhost:3000 in your browser.
 
 - Version 1 focuses on one job: paste confusing homework directions and choose Explain it.
 - The AI returns a short explanation and clear steps without doing the assignment.
+- The “Try an example” button fills in made-up homework directions for a quick demonstration.
 - The server reads the OpenAI key only from `.env`; the browser never receives it.
 - The server sends `BRIEF.md` as the AI system instructions for every explanation request.
 - The OpenAI model is `gpt-4o-mini`.
 - Models available to this key with “luna” in the name: `gpt-5.6-luna` and `gpt-6-luna`.
 - The button shows “Thinking…” while waiting and is disabled to prevent double requests.
 - Friendly error text appears when the key or internet connection does not work.
-- Explanations are saved in localStorage with made-up sample data support, so data stays in this browser for now.
+- Explanations and three made-up sample items are saved in localStorage, so data stays in this browser for now.
 - Saves on this computer only for now.
 - `.env` is ignored by Git.
 
 ## How to check the main job
 
-1. Run `npm start`.
+1. Run the command above.
 2. Open http://localhost:3000.
 3. Paste the sample directions shown in the box.
 4. Choose Explain it and wait for the clear one-sentence summary and numbered steps.

@@ -1,4 +1,4 @@
-import { saveExplanation } from './storage.js';
+import { loadSavedExplanations, saveExplanation } from './storage.js';
 
 const instructionsInput = document.querySelector('#instructions');
 const explainButton = document.querySelector('#explain-button');
@@ -44,4 +44,5 @@ explainButton.addEventListener('click', async () => {
   } finally { explainButton.disabled = false; }
 });
 
+loadSavedExplanations();
 updateCount();
