@@ -20,11 +20,23 @@ exampleButton.addEventListener('click', () => {
   instructionsInput.focus();
 });
 
-function formatResult(result) {
-  return result
-    .replace(/\s+(What it means:|Steps:|Ask your teacher:)/g, '\n\n$1')
-    .replace(/\s+(\d+\.)\s+/g, '\n$1 ')
-    .trim();
+function addResultSection(title, items, type = 'paragraph') {
+  if (!items || (Array.isArray(items) && items.length === 0)) return;
+  const section = document.createElement('section');
+  section.className = 'answer-section';
+  const heading = document.createElement('h3');
+  heading.textContent = title;
+  section.appendChild(heading);
+  if (type === 'list') {
+    const list = document.createElement('ol');
+    items.forEach((item) => { const row = document.createElement('li'); row.textContent = item; list.appendChild(row); });
+    section.appendChild(list);
+  } else {
+    const text = document.createElement('p');
+    text.textContent = items;
+    section.appendChild(text);
+  }
+  resultContent.appendChild(section);
 }
 
 function showResult(result, isError = false) {
@@ -32,7 +44,15 @@ function showResult(result, isError = false) {
   resultLoading.hidden = true;
   resultContent.hidden = false;
   resultContent.classList.toggle('error-result', isError);
-  resultContent.textContent = formatResult(result);
+  resultContent.replaceChildren();
+  if (isError || typeof result === 'string') {
+    resultContent.textContent = result;
+    return;
+  }
+  addResultSection('What your assignment means', result.summary);
+  addResultSection('Steps to follow', result.steps, 'list');
+  addResultSection('Important requirements', result.importantRequirements, 'list');
+  addResultSection('Things to ask your teacher', result.missingInformation, 'list');
 }
 
 instructionsInput.addEventListener('input', updateCount);

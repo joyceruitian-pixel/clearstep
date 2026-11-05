@@ -19,4 +19,7 @@ body::before { content: ""; position: fixed; inset: 0; pointer-events: none; opa
 .primary-button { min-width: 132px; box-shadow: 0 6px 12px rgba(23,107,112,.16); }
 .result-content { max-width: 690px; }
 .result-content.error-result { border-left-color: #d68a55; color: #7b4938; background: #fff9f4; padding: 14px 18px; border-radius: 10px; }
+.answer-section + .answer-section { border-top: 1px solid var(--line); margin-top: 18px; padding-top: 16px; }
+.answer-section h3 { margin: 0 0 7px; color: var(--teal-dark); font-size: .78rem; letter-spacing: .02em; text-transform: uppercase; }
+.answer-section p, .answer-section ol { margin: 0; }.answer-section p { line-height: 1.6; }.answer-section ol { padding-left: 23px; }.answer-section li { padding: 3px 0 3px 4px; line-height: 1.5; }.answer-section li::marker { color: var(--teal); font-weight: 800; }
 @media (min-width: 701px) { .hero h1 { font-size: clamp(3.2rem, 7vw, 5.15rem); } }
