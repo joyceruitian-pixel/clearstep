@@ -20,6 +20,7 @@ Then open http://localhost:3000 in your browser.
 - The OpenAI model is `gpt-4o-mini`.
 - Models available to this key with “luna” in the name: `gpt-5.6-luna` and `gpt-6-luna`.
 - The button shows “Thinking…” while waiting and is disabled to prevent double requests.
+- A completion message says “Done — your clear steps are ready” after a successful explanation.
 - Friendly error text appears when the key or internet connection does not work.
 - Explanations and three made-up sample items are saved in localStorage, so data stays in this browser for now.
 - Saves on this computer only for now.
