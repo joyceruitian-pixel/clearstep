@@ -59,6 +59,13 @@ Then open http://localhost:3000 in your browser.
 - The UI-state bug found during testing was fixed before the save point.
 - Focus Mode now also shows a compact overview of current, unfinished, and completed steps, plus a friendly message after every step is checked.
 
+## ClearStep 4.0 design round
+
+- The page now uses a premium “Clarity in Motion” visual direction: sticky brand bar, stronger hero composition, connected before-and-after preview, and a two-column input/results workspace on larger screens.
+- Smaller screens switch to one column, preserve comfortable controls, and keep the homework input before the explanation.
+- Verified the rendered page in a live browser, selected the Math example, reached a real three-step AI result, and opened Focus Mode at Step 1.
+- Still needs a careful phone-size visual pass and more student feedback before calling the design finished.
+
 ## Stop-for-today checkpoint
 
 - What works now: ClearStep’s example, input, AI explanation, numbered steps, safety guidance, friendly errors, polished screen, and browser saving after reload.
