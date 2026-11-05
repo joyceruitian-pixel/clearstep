@@ -9,3 +9,4 @@ Round 8 | changed AI results to validated sections for summary, steps, requireme
 Round 9 | added Math, English, Science, and History sample-assignment buttons | made the real AI demo quicker and more representative of schoolwork
 Round 10 | added Clear and disabled Explain until instructions are present | prevented empty requests and made it easy to start a fresh explanation
 Round 11 | added a Copy explanation action with a confirmation message | made the useful result easy to take into a notebook or video demo
+Round 12 | added keyboard focus visibility, reduced-motion support, and live result announcements | made the main activity more accessible without adding complexity

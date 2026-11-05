@@ -35,8 +35,8 @@
       <div class="result-card card" aria-live="polite">
         <div class="card-heading"><div><span class="step-number pale">2</span><h2>See your clear steps</h2></div><span id="saved-label" class="saved-label">Your device only</span></div>
         <div id="result-empty" class="result-empty"><div class="spark">✦</div><p>Your explanation will appear here.</p><span>Paste your directions above, then choose Explain it.</span></div>
-        <div id="result-loading" class="result-loading" hidden><div class="loader"></div><p>Thinking…</p><span>Reading your directions carefully</span></div>
-        <div id="result-content" class="result-content" hidden></div>
+        <div id="result-loading" class="result-loading" role="status" aria-live="polite" hidden><div class="loader"></div><p>Thinking…</p><span>Reading your directions carefully</span></div>
+        <div id="result-content" class="result-content" aria-live="polite" hidden></div>
         <div id="result-actions" class="result-actions" hidden><button id="copy-button" class="secondary-button" type="button">Copy explanation</button><span id="copy-status" role="status"></span></div>
       </div>
     </section>
