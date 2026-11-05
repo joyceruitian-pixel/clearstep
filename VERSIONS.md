@@ -18,3 +18,5 @@ Round 17 | removed the duplicate requirements list and kept one checkable requir
 Round 18 | added a Spanish sample assignment | made the demo represent another common middle-school subject without adding complexity
 Round 19 | added a compact illustrative Before/After directions panel | made ClearStep’s difference from a general chatbot memorable without faking an AI result
 Round 20 | created a competition-evidence folder with a 30-case evaluation plan and honest test records | made the project’s evidence and next testing steps easier to review
+Round 21 | fixed Focus Mode restoration, bounds, navigation labels, and completed-step progress | stopped saved Step 2 state from opening silently and separated moving from completing
+Round 22 | added 15 automated Focus Mode state tests | protected step numbering, boundaries, completion separation, and progress calculations from regressions

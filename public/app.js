@@ -16,10 +16,16 @@ const focusPanel = document.querySelector('#focus-panel');
 const focusTitle = document.querySelector('#focus-title');
 const focusStep = document.querySelector('#focus-step');
 const focusProgressBar = document.querySelector('#focus-progress-bar');
+const focusProgressLabel = document.querySelector('#focus-progress-label');
 const focusPrevious = document.querySelector('#focus-previous');
 const focusComplete = document.querySelector('#focus-complete');
 const focusNext = document.querySelector('#focus-next');
 const focusClose = document.querySelector('#focus-close');
+const focusResume = document.querySelector('#focus-resume');
+const focusContent = document.querySelector('#focus-content');
+const resumeStepNumber = document.querySelector('#resume-step-number');
+const resumeButton = document.querySelector('#resume-button');
+const startOverButton = document.querySelector('#start-over-button');
 const exampleButtons = document.querySelectorAll('[data-example]');
 const explainLabel = document.querySelector('#explain-label');
 const savedLabel = document.querySelector('#saved-label');
@@ -36,6 +42,8 @@ let isLoading = false;
 let latestResult = null;
 let currentSteps = [];
 let focusProgress = { index: 0, completed: [] };
+let currentAssignment = '';
+let hasSavedFocusProgress = false;
 
 function updateCount() {
   charCount.textContent = `${instructionsInput.value.length.toLocaleString()} / 12,000`;
@@ -98,13 +106,15 @@ function addRequirementChecklist(requirements) {
 
 function renderFocus() {
   const total = currentSteps.length;
-  const index = Math.min(focusProgress.index, Math.max(total - 1, 0));
-  focusProgress.index = index;
+  focusProgress = ClearStepFocus.normalizeProgress(focusProgress, total);
+  const index = focusProgress.index;
   focusTitle.textContent = `Step ${total ? index + 1 : 0} of ${total}`;
   focusStep.textContent = currentSteps[index] || 'There are no steps to focus on yet.';
-  focusProgressBar.style.width = total ? `${((index + 1) / total) * 100}%` : '0%';
+  focusProgressBar.style.width = `${ClearStepFocus.completedPercent(focusProgress.completed, total)}%`;
+  focusProgressLabel.textContent = `${focusProgress.completed.length} of ${total} steps completed`;
   focusPrevious.disabled = index === 0;
-  focusNext.disabled = index >= total - 1;
+  focusNext.disabled = total === 0;
+  focusNext.textContent = index >= total - 1 ? 'Review steps' : 'Next step';
   const complete = focusProgress.completed.includes(index);
   focusComplete.textContent = complete ? 'Completed ✓' : 'Mark complete';
   focusComplete.setAttribute('aria-pressed', String(complete));
@@ -118,6 +128,8 @@ function showResult(result, isError = false) {
   resultActions.hidden = isError;
   completionStatus.hidden = isError;
   focusPanel.hidden = true;
+  focusResume.hidden = true;
+  focusContent.hidden = false;
   copyStatus.textContent = '';
   resultContent.replaceChildren();
   currentSteps = [];
@@ -127,7 +139,9 @@ function showResult(result, isError = false) {
     return;
   }
   currentSteps = Array.isArray(result.steps) ? result.steps : [];
-  focusProgress = loadFocusProgress(currentSteps);
+  const savedProgress = loadFocusProgress(currentSteps, currentAssignment);
+  focusProgress = ClearStepFocus.normalizeProgress(savedProgress, currentSteps.length);
+  hasSavedFocusProgress = savedProgress.saved && (focusProgress.index > 0 || focusProgress.completed.length > 0);
   addResultSection('What your assignment means', result.summary);
   addResultSection('Steps to follow', result.steps, 'list');
   addResultSection('Things to ask your teacher', result.missingInformation, 'list');
@@ -146,6 +160,10 @@ function resultToText(result) {
 instructionsInput.addEventListener('input', updateCount);
 clearButton.addEventListener('click', () => {
   instructionsInput.value = '';
+  currentAssignment = '';
+  currentSteps = [];
+  focusProgress = { index: 0, completed: [] };
+  hasSavedFocusProgress = false;
   resultContent.hidden = true;
   resultEmpty.hidden = false;
   savedLabel.textContent = 'Your device only';
@@ -159,6 +177,23 @@ focusButton.addEventListener('click', () => {
   resultContent.hidden = true;
   resultActions.hidden = true;
   focusPanel.hidden = false;
+  if (hasSavedFocusProgress) {
+    focusResume.hidden = false;
+    focusContent.hidden = true;
+    resumeStepNumber.textContent = focusProgress.index + 1;
+  } else {
+    focusResume.hidden = true;
+    focusContent.hidden = false;
+    renderFocus();
+  }
+});
+resumeButton.addEventListener('click', () => { focusResume.hidden = true; focusContent.hidden = false; renderFocus(); });
+startOverButton.addEventListener('click', () => {
+  focusProgress = { index: 0, completed: [] };
+  hasSavedFocusProgress = false;
+  saveFocusProgress(currentSteps, currentAssignment, focusProgress);
+  focusResume.hidden = true;
+  focusContent.hidden = false;
   renderFocus();
 });
 focusClose.addEventListener('click', () => {
@@ -166,12 +201,19 @@ focusClose.addEventListener('click', () => {
   resultContent.hidden = false;
   resultActions.hidden = false;
 });
-focusPrevious.addEventListener('click', () => { focusProgress.index -= 1; saveFocusProgress(currentSteps, focusProgress); renderFocus(); });
-focusNext.addEventListener('click', () => { focusProgress.index += 1; saveFocusProgress(currentSteps, focusProgress); renderFocus(); });
+focusPrevious.addEventListener('click', () => { focusProgress.index = ClearStepFocus.previousIndex(focusProgress.index, currentSteps.length); saveFocusProgress(currentSteps, currentAssignment, focusProgress); hasSavedFocusProgress = true; renderFocus(); });
+focusNext.addEventListener('click', () => {
+  if (focusProgress.index >= currentSteps.length - 1) { focusClose.click(); return; }
+  focusProgress.index = ClearStepFocus.nextIndex(focusProgress.index, currentSteps.length);
+  saveFocusProgress(currentSteps, currentAssignment, focusProgress);
+  hasSavedFocusProgress = true;
+  renderFocus();
+});
 focusComplete.addEventListener('click', () => {
   const index = focusProgress.index;
   focusProgress.completed = focusProgress.completed.includes(index) ? focusProgress.completed.filter((item) => item !== index) : [...focusProgress.completed, index];
-  saveFocusProgress(currentSteps, focusProgress);
+  saveFocusProgress(currentSteps, currentAssignment, focusProgress);
+  hasSavedFocusProgress = true;
   renderFocus();
 });
 copyButton.addEventListener('click', async () => {
@@ -200,6 +242,7 @@ explainButton.addEventListener('click', async () => {
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || 'Something went wrong.');
     latestResult = data.result;
+    currentAssignment = instructions;
     showResult(data.result);
     saveExplanation({ instructions, result: data.result, savedAt: new Date().toISOString() });
     savedLabel.textContent = 'Saved on this device';
@@ -212,6 +255,7 @@ const savedItems = loadSavedExplanations();
 const latestSaved = savedItems.find((item) => !item.sample);
 if (latestSaved) {
   instructionsInput.value = latestSaved.instructions;
+  currentAssignment = latestSaved.instructions;
   latestResult = latestSaved.result;
   showResult(latestSaved.result);
   savedLabel.textContent = 'Saved on this device';

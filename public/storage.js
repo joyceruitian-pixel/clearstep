@@ -22,16 +22,18 @@ export function saveExplanation(item) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify([item, ...saved].slice(0, 5)));
 }
 
-export function loadFocusProgress(steps) {
+function focusSignature(steps, assignmentKey) { return `${assignmentKey}\u0000${steps.join('|')}`; }
+
+export function loadFocusProgress(steps, assignmentKey) {
   try {
     const saved = JSON.parse(localStorage.getItem(FOCUS_KEY));
-    if (saved?.signature === steps.join('|')) return { index: saved.index || 0, completed: saved.completed || [] };
+    if (saved?.signature === focusSignature(steps, assignmentKey)) return { index: saved.index, completed: saved.completed, saved: true };
   } catch {}
-  return { index: 0, completed: [] };
+  return { index: 0, completed: [], saved: false };
 }
 
-export function saveFocusProgress(steps, progress) {
-  localStorage.setItem(FOCUS_KEY, JSON.stringify({ signature: steps.join('|'), ...progress }));
+export function saveFocusProgress(steps, assignmentKey, progress) {
+  localStorage.setItem(FOCUS_KEY, JSON.stringify({ signature: focusSignature(steps, assignmentKey), ...progress }));
 }
 
 export function loadRequirementChecks(requirements) {

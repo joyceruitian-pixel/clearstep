@@ -46,6 +46,12 @@ Then open http://localhost:3000 in your browser.
 - Tested with made-up homework directions, an off-topic harmful request, the example button, the loading state, the AI response, and saving after reload.
 - Next change: test the wording with more middle school students and use their feedback to improve the explanations.
 
+## Focus Mode fix
+
+- Focus Mode now starts new assignments on Step 1, keeps Previous and Next inside the available steps, and shows completed-step progress separately from the current step.
+- Students can mark a step complete without being moved, and reopening an assignment shows a clear Resume or Start over choice instead of silently restoring an old step.
+- Verified with a real five-step assignment in the browser and 15 automated state tests. All 15 automated tests passed.
+
 ## Stop-for-today checkpoint
 
 - What works now: ClearStep’s example, input, AI explanation, numbered steps, safety guidance, friendly errors, polished screen, and browser saving after reload.

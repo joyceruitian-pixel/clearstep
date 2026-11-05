@@ -4,6 +4,7 @@
   "private": true,
   "description": "Clear homework instructions for middle school students",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "node --test tests/focus-mode.test.mjs"
   }
 }
