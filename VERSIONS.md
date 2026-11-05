@@ -16,3 +16,4 @@ Round 15 | added a “Done — your clear steps are ready” message after succe
 Round 16 | added Focus Mode with one-step navigation and an explicit-requirements checklist | helped students organize the work without completing it for them
 Round 17 | removed the duplicate requirements list and kept one checkable requirements section | made the structured result easier to scan
 Round 18 | added a Spanish sample assignment | made the demo represent another common middle-school subject without adding complexity
+Round 19 | added a compact illustrative Before/After directions panel | made ClearStep’s difference from a general chatbot memorable without faking an AI result
