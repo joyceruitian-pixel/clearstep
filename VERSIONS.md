@@ -12,3 +12,4 @@ Round 11 | added a Copy explanation action with a confirmation message | made th
 Round 12 | added keyboard focus visibility, reduced-motion support, and live result announcements | made the main activity more accessible without adding complexity
 Round 13 | changed the hero headline and supporting text to state the problem and solution immediately | made ClearStep easier to understand at first glance
 Round 14 | updated the empty-result helper text to match the “Explain directions” button | removed a confusing old label during first use
+Round 15 | added a “Done — your clear steps are ready” message after successful explanations | made it obvious when the AI finished working

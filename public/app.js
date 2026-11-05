@@ -7,6 +7,7 @@ const charCount = document.querySelector('#char-count');
 const resultEmpty = document.querySelector('#result-empty');
 const resultLoading = document.querySelector('#result-loading');
 const resultContent = document.querySelector('#result-content');
+const completionStatus = document.querySelector('#completion-status');
 const resultActions = document.querySelector('#result-actions');
 const copyButton = document.querySelector('#copy-button');
 const copyStatus = document.querySelector('#copy-status');
@@ -60,6 +61,7 @@ function showResult(result, isError = false) {
   resultContent.hidden = false;
   resultContent.classList.toggle('error-result', isError);
   resultActions.hidden = isError;
+  completionStatus.hidden = isError;
   copyStatus.textContent = '';
   resultContent.replaceChildren();
   if (isError || typeof result === 'string') {
@@ -87,6 +89,7 @@ clearButton.addEventListener('click', () => {
   resultEmpty.hidden = false;
   savedLabel.textContent = 'Your device only';
   resultActions.hidden = true;
+  completionStatus.hidden = true;
   updateCount();
   instructionsInput.focus();
 });
@@ -108,6 +111,7 @@ explainButton.addEventListener('click', async () => {
   resultEmpty.hidden = true;
   resultContent.hidden = true;
   resultActions.hidden = true;
+  completionStatus.hidden = true;
   resultLoading.hidden = false;
   try {
     const response = await fetch('/api/explain', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ instructions }) });
