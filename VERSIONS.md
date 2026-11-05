@@ -14,3 +14,4 @@ Round 13 | changed the hero headline and supporting text to state the problem an
 Round 14 | updated the empty-result helper text to match the “Explain directions” button | removed a confusing old label during first use
 Round 15 | added a “Done — your clear steps are ready” message after successful explanations | made it obvious when the AI finished working
 Round 16 | added Focus Mode with one-step navigation and an explicit-requirements checklist | helped students organize the work without completing it for them
+Round 17 | removed the duplicate requirements list and kept one checkable requirements section | made the structured result easier to scan

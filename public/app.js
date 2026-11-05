@@ -71,7 +71,7 @@ function addRequirementChecklist(requirements) {
   const section = document.createElement('section');
   section.className = 'answer-section requirements-section';
   const heading = document.createElement('h3');
-  heading.textContent = 'Check your requirements';
+  heading.textContent = 'Important requirements';
   section.appendChild(heading);
   const list = document.createElement('ul');
   list.className = 'requirement-list';
@@ -129,7 +129,6 @@ function showResult(result, isError = false) {
   focusProgress = loadFocusProgress(currentSteps);
   addResultSection('What your assignment means', result.summary);
   addResultSection('Steps to follow', result.steps, 'list');
-  addResultSection('Important requirements', result.importantRequirements, 'list');
   addResultSection('Things to ask your teacher', result.missingInformation, 'list');
   addRequirementChecklist(result.importantRequirements);
   focusButton.hidden = currentSteps.length === 0;
