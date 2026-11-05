@@ -6,19 +6,24 @@ const charCount = document.querySelector('#char-count');
 const resultEmpty = document.querySelector('#result-empty');
 const resultLoading = document.querySelector('#result-loading');
 const resultContent = document.querySelector('#result-content');
-const exampleButton = document.querySelector('#example-button');
+const exampleButtons = document.querySelectorAll('[data-example]');
 const explainLabel = document.querySelector('#explain-label');
 const savedLabel = document.querySelector('#saved-label');
 
-const EXAMPLE_INSTRUCTIONS = 'Read pages 42–48. In your notebook, write three details that show how the main character changes. Use a quote for each detail.';
+const EXAMPLES = {
+  math: 'Solve problems 1–10 on page 76. Show your work for each problem and circle your final answers.',
+  english: 'Read pages 42–48. In your notebook, write three details that show how the main character changes. Use a quote for each detail.',
+  science: 'Observe a plant for five days. Record one change each day and write a short conclusion about what you noticed.',
+  history: 'Read the primary source about the town meeting. List two points of view and explain which evidence supports each one.'
+};
 
 function updateCount() { charCount.textContent = `${instructionsInput.value.length.toLocaleString()} / 12,000`; }
 
-exampleButton.addEventListener('click', () => {
-  instructionsInput.value = EXAMPLE_INSTRUCTIONS;
+exampleButtons.forEach((button) => button.addEventListener('click', () => {
+  instructionsInput.value = EXAMPLES[button.dataset.example];
   updateCount();
   instructionsInput.focus();
-});
+}));
 
 function addResultSection(title, items, type = 'paragraph') {
   if (!items || (Array.isArray(items) && items.length === 0)) return;

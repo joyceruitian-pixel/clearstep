@@ -6,3 +6,4 @@ Round 5 | added an explicit off-topic and harmful-request safety check to the AI
 Round 6 | changed the privacy label to say “Leave out names and private details” | made the personal-information safety reminder easier to understand
 Round 7 | renamed the main button to “Explain directions” | made ClearStep’s unique job obvious at first glance and in a short video
 Round 8 | changed AI results to validated sections for summary, steps, requirements, and missing information | made explanations easier to scan and safer to display
+Round 9 | added Math, English, Science, and History sample-assignment buttons | made the real AI demo quicker and more representative of schoolwork

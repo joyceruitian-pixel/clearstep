@@ -16,6 +16,8 @@ body::before { content: ""; position: fixed; inset: 0; pointer-events: none; opa
 .hero-note span { color: #d08b25; }
 .example-button { margin-top: 12px; padding: 8px 11px; border: 1px solid #b9d7d1; border-radius: 8px; background: #f7fbf9; text-decoration: none; }
 .example-button:hover { background: var(--mint); text-decoration: none; }
+.example-picker { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; margin-top: 12px; color: var(--muted); font-size: .72rem; }
+.example-picker .example-button { margin: 0; padding: 7px 10px; }
 .primary-button { min-width: 132px; box-shadow: 0 6px 12px rgba(23,107,112,.16); }
 .result-content { max-width: 690px; }
 .result-content.error-result { border-left-color: #d68a55; color: #7b4938; background: #fff9f4; padding: 14px 18px; border-radius: 10px; }
