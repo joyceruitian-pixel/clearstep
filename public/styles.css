@@ -18,7 +18,7 @@ body::before { content: ""; position: fixed; inset: 0; pointer-events: none; opa
 .example-button:hover { background: var(--mint); text-decoration: none; }
 .example-picker { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; margin-top: 12px; color: var(--muted); font-size: .72rem; }
 .example-picker .example-button { margin: 0; padding: 7px 10px; }
-.primary-button { min-width: 132px; box-shadow: 0 6px 12px rgba(23,107,112,.16); }
+.input-actions { display: flex; align-items: center; gap: 8px; }.secondary-button { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; color: var(--teal-dark); background: white; font: 800 .8rem inherit; cursor: pointer; }.secondary-button:hover, .secondary-button:focus-visible { background: var(--mint); border-color: #b9d7d1; }.primary-button { min-width: 132px; box-shadow: 0 6px 12px rgba(23,107,112,.16); }
 .result-content { max-width: 690px; }
 .result-content.error-result { border-left-color: #d68a55; color: #7b4938; background: #fff9f4; padding: 14px 18px; border-radius: 10px; }
 .answer-section + .answer-section { border-top: 1px solid var(--line); margin-top: 18px; padding-top: 16px; }

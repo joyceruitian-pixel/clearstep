@@ -2,6 +2,7 @@ import { loadSavedExplanations, saveExplanation } from './storage.js';
 
 const instructionsInput = document.querySelector('#instructions');
 const explainButton = document.querySelector('#explain-button');
+const clearButton = document.querySelector('#clear-button');
 const charCount = document.querySelector('#char-count');
 const resultEmpty = document.querySelector('#result-empty');
 const resultLoading = document.querySelector('#result-loading');
@@ -17,7 +18,12 @@ const EXAMPLES = {
   history: 'Read the primary source about the town meeting. List two points of view and explain which evidence supports each one.'
 };
 
-function updateCount() { charCount.textContent = `${instructionsInput.value.length.toLocaleString()} / 12,000`; }
+let isLoading = false;
+
+function updateCount() {
+  charCount.textContent = `${instructionsInput.value.length.toLocaleString()} / 12,000`;
+  explainButton.disabled = isLoading || !instructionsInput.value.trim();
+}
 
 exampleButtons.forEach((button) => button.addEventListener('click', () => {
   instructionsInput.value = EXAMPLES[button.dataset.example];
@@ -61,10 +67,19 @@ function showResult(result, isError = false) {
 }
 
 instructionsInput.addEventListener('input', updateCount);
+clearButton.addEventListener('click', () => {
+  instructionsInput.value = '';
+  resultContent.hidden = true;
+  resultEmpty.hidden = false;
+  savedLabel.textContent = 'Your device only';
+  updateCount();
+  instructionsInput.focus();
+});
 explainButton.addEventListener('click', async () => {
   const instructions = instructionsInput.value.trim();
   if (!instructions) { instructionsInput.focus(); return; }
-  explainButton.disabled = true;
+  isLoading = true;
+  updateCount();
   explainLabel.textContent = 'Thinking…';
   resultEmpty.hidden = true;
   resultContent.hidden = true;
@@ -78,7 +93,7 @@ explainButton.addEventListener('click', async () => {
     savedLabel.textContent = 'Saved on this device';
   } catch (error) {
     showResult(`I couldn't explain that right now. ${error.message} Please compare with your teacher's original directions.`, true);
-  } finally { explainButton.disabled = false; explainLabel.textContent = 'Explain directions'; }
+  } finally { isLoading = false; explainLabel.textContent = 'Explain directions'; updateCount(); }
 });
 
 const savedItems = loadSavedExplanations();
