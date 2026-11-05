@@ -20,6 +20,8 @@ const focusTitle = document.querySelector('#focus-title');
 const focusStep = document.querySelector('#focus-step');
 const focusProgressBar = document.querySelector('#focus-progress-bar');
 const focusProgressLabel = document.querySelector('#focus-progress-label');
+const focusOverview = document.querySelector('#focus-overview');
+const focusCompleteMessage = document.querySelector('#focus-complete-message');
 const focusPrevious = document.querySelector('#focus-previous');
 const focusComplete = document.querySelector('#focus-complete');
 const focusNext = document.querySelector('#focus-next');
@@ -116,6 +118,25 @@ function renderFocus() {
   focusStep.textContent = currentSteps[index] || 'There are no steps to focus on yet.';
   focusProgressBar.style.width = `${ClearStepFocus.completedPercent(focusProgress.completed, total)}%`;
   focusProgressLabel.textContent = `${focusProgress.completed.length} of ${total} steps completed`;
+  focusOverview.replaceChildren();
+  currentSteps.forEach((step, stepIndex) => {
+    const item = document.createElement('li');
+    const button = document.createElement('button');
+    const complete = focusProgress.completed.includes(stepIndex);
+    button.type = 'button';
+    button.className = 'focus-overview-item';
+    button.textContent = `Step ${stepIndex + 1} — ${complete ? 'Complete' : stepIndex === index ? 'Current' : 'Not started'}`;
+    if (stepIndex === index) button.setAttribute('aria-current', 'step');
+    button.addEventListener('click', () => {
+      focusProgress.index = stepIndex;
+      saveFocusProgress(currentSteps, currentAssignment, focusProgress);
+      hasSavedFocusProgress = true;
+      renderFocus();
+    });
+    item.appendChild(button);
+    focusOverview.appendChild(item);
+  });
+  focusCompleteMessage.hidden = total === 0 || focusProgress.completed.length !== total;
   focusPrevious.disabled = index === 0;
   focusNext.disabled = total === 0;
   focusNext.textContent = index >= total - 1 ? 'Review steps' : 'Next step';

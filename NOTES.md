@@ -57,6 +57,7 @@ Then open http://localhost:3000 in your browser.
 - Added a working Explain more simply action that uses the private server-side AI route, then lets students return to the original explanation.
 - Tested the action through the real website with the saved homework example. The original explanation, simpler explanation, and return button all worked.
 - The UI-state bug found during testing was fixed before the save point.
+- Focus Mode now also shows a compact overview of current, unfinished, and completed steps, plus a friendly message after every step is checked.
 
 ## Stop-for-today checkpoint
 
