@@ -21,6 +21,8 @@ Then open http://localhost:3000 in your browser.
 - Models available to this key with “luna” in the name: `gpt-5.6-luna` and `gpt-6-luna`.
 - The button shows “Thinking…” while waiting and is disabled to prevent double requests.
 - A completion message says “Done — your clear steps are ready” after a successful explanation.
+- Focus Mode shows one AI-generated step at a time, supports completion and navigation, and restores progress locally after reload.
+- Explicit assignment requirements appear as checkboxes, and the project has a `competition-evidence/` folder with real test records and templates.
 - Friendly error text appears when the key or internet connection does not work.
 - Explanations and three made-up sample items are saved in localStorage, so data stays in this browser for now.
 - Saves on this computer only for now.
@@ -34,8 +36,9 @@ Then open http://localhost:3000 in your browser.
 
 ## Remaining limits
 
-- Optional features such as step checkboxes, recent-history management, Explain More Simply, dark mode, and a real database remain in Maybe Later.
+- Optional features such as recent-history management, Explain More Simply, dark mode, and a real database remain in Maybe Later.
 - More middle school student feedback is still the best next improvement for wording and usefulness.
+- The 30-case AI evaluation plan is not all complete yet; cases marked “Not run” need honest testing before being called passed.
 
 ## Keep Improving progress
 
