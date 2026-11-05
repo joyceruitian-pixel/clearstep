@@ -25,6 +25,17 @@ Then open http://localhost:3000 in your browser.
 - Saves on this computer only for now.
 - `.env` is ignored by Git.
 
+## Championship polish progress
+
+- AI results now use clear sections for the assignment meaning, numbered steps, explicit requirements, and questions for the teacher.
+- Added Math, English, Science, and History examples, a Clear button, empty-input protection, Copy explanation, accessibility announcements, reduced-motion support, and a clearer first impression.
+- Final checks passed for the real AI flow, structured Math response, off-topic safety refusal, empty input, copy confirmation, reload saving, homepage loading, and API-key privacy.
+
+## Remaining limits
+
+- Optional features such as step checkboxes, recent-history management, Explain More Simply, dark mode, and a real database remain in Maybe Later.
+- More middle school student feedback is still the best next improvement for wording and usefulness.
+
 ## Keep Improving progress
 
 - Completed Rounds 5–7: stronger off-topic safety, clearer privacy wording, and a more obvious “Explain directions” action.
