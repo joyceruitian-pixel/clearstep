@@ -17,6 +17,7 @@
       <div class="eyebrow">Homework direction helper</div>
       <h1 id="page-title">Turn confusing directions<br><em>into clear next steps.</em></h1>
       <p class="hero-copy">ClearStep explains what your assignment is asking—without doing the work for you.</p>
+      <p class="hero-note"><span>✦</span> Made for the directions that make you stop and think, “Wait… what do I do?”</p>
     </section>
 
     <section class="workspace" aria-label="Explain homework instructions">
@@ -25,14 +26,14 @@
         <label for="instructions" class="sr-only">Homework instructions</label>
         <textarea id="instructions" maxlength="12000" placeholder="Example: Read pages 42–48. In your notebook, write three details that show how the main character changes. Use a quote for each detail."></textarea>
         <button id="example-button" class="example-button" type="button">Try an example ↗</button>
-        <div class="input-footer"><span id="char-count">0 / 12,000</span><button id="explain-button" class="primary-button" type="button"><span>Explain it</span><span class="arrow">→</span></button></div>
+        <div class="input-footer"><span id="char-count">0 / 12,000</span><button id="explain-button" class="primary-button" type="button"><span id="explain-label">Explain it</span><span class="arrow">→</span></button></div>
         <p class="safety-hint"><span>ⓘ</span> ClearStep explains directions only. Your teacher’s instructions always come first.</p>
       </div>
 
       <div class="connector" aria-hidden="true"><span>↓</span></div>
 
       <div class="result-card card" aria-live="polite">
-        <div class="card-heading"><div><span class="step-number pale">2</span><h2>See your clear steps</h2></div><span id="saved-label" class="saved-label">Saved on this device</span></div>
+        <div class="card-heading"><div><span class="step-number pale">2</span><h2>See your clear steps</h2></div><span id="saved-label" class="saved-label">Your device only</span></div>
         <div id="result-empty" class="result-empty"><div class="spark">✦</div><p>Your explanation will appear here.</p><span>Paste your directions above, then choose Explain it.</span></div>
         <div id="result-loading" class="result-loading" hidden><div class="loader"></div><p>Thinking…</p><span>Reading your directions carefully</span></div>
         <div id="result-content" class="result-content" hidden></div>

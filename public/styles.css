@@ -12,3 +12,11 @@ body::before { content: ""; position: fixed; inset: 0; pointer-events: none; opa
 @media (max-width: 700px) { .topbar { padding: 20px; }.privacy-note { display: none; }.page-shell { padding: 30px 18px 54px; }.card { padding: 20px; }.card-heading { align-items: flex-start; }.optional { max-width: 100px; text-align: right; }.difference { grid-template-columns: 1fr; gap: 28px; margin-top: 65px; padding-top: 38px; }footer { margin: 0 18px; padding-left: 0; padding-right: 0; gap: 8px; flex-direction: column; }.hero h1 { font-size: 2.7rem; } }
 .example-button { display: block; margin: 10px 0 0; padding: 0; border: 0; color: var(--teal); background: transparent; font: 700 .73rem inherit; cursor: pointer; }
 .example-button:hover { color: var(--teal-dark); text-decoration: underline; }
+.hero-note { display: inline-flex; align-items: center; gap: 7px; margin: 18px 0 0; padding: 8px 12px; border-radius: 999px; color: var(--teal-dark); background: var(--mint); font-size: .73rem; font-weight: 700; }
+.hero-note span { color: #d08b25; }
+.example-button { margin-top: 12px; padding: 8px 11px; border: 1px solid #b9d7d1; border-radius: 8px; background: #f7fbf9; text-decoration: none; }
+.example-button:hover { background: var(--mint); text-decoration: none; }
+.primary-button { min-width: 132px; box-shadow: 0 6px 12px rgba(23,107,112,.16); }
+.result-content { max-width: 690px; }
+.result-content.error-result { border-left-color: #d68a55; color: #7b4938; background: #fff9f4; padding: 14px 18px; border-radius: 10px; }
+@media (min-width: 701px) { .hero h1 { font-size: clamp(3.2rem, 7vw, 5.15rem); } }
