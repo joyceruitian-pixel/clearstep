@@ -25,6 +25,11 @@ Then open http://localhost:3000 in your browser.
 - Saves on this computer only for now.
 - `.env` is ignored by Git.
 
+## Stop-for-today checkpoint
+
+- What works now: ClearStep’s example, input, AI explanation, numbered steps, safety guidance, friendly errors, polished screen, and browser saving after reload.
+- Very next change: Test the wording with more middle school students and use their feedback to improve the explanations.
+
 ## How to check the main job
 
 1. Run the command above.
