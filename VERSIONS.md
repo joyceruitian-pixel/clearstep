@@ -4,3 +4,4 @@ Round 3 | added a structured AI response prompt, sample browser items, and frien
 Round 4 | polished the screen and restored the latest saved explanation after reload | made the app easier to understand and confirmed local saving
 Round 5 | added an explicit off-topic and harmful-request safety check to the AI request | reinforced that ClearStep explains homework directions instead of doing unrelated work
 Round 6 | changed the privacy label to say “Leave out names and private details” | made the personal-information safety reminder easier to understand
+Round 7 | renamed the main button to “Explain directions” | made ClearStep’s unique job obvious at first glance and in a short video

@@ -53,7 +53,7 @@ explainButton.addEventListener('click', async () => {
     savedLabel.textContent = 'Saved on this device';
   } catch (error) {
     showResult(`I couldn't explain that right now. ${error.message} Please compare with your teacher's original directions.`, true);
-  } finally { explainButton.disabled = false; explainLabel.textContent = 'Explain it'; }
+  } finally { explainButton.disabled = false; explainLabel.textContent = 'Explain directions'; }
 });
 
 const savedItems = loadSavedExplanations();
