@@ -74,6 +74,12 @@ Then open http://localhost:3000 in your browser.
 - Live browser checks confirmed the Try ClearStep action is visible, a Math example becomes selected, typing a new assignment clears the selection, and the existing explanation still renders five steps.
 - All 15 Focus Mode tests and JavaScript checks passed after the UI changes.
 
+## Creative redesign round
+
+- Replaced the plain hero rail with a layered product preview showing a confusing assignment becoming three clear steps.
+- Added a navy, ivory, coral, lavender, and teal visual system plus a Paste → Understand → Start journey to make the product feel more distinctive without adding clutter.
+- Tested the rendered page with a screenshot at a 319px mobile viewport: no horizontal overflow, Try ClearStep is visible, and Focus Mode still opens at Step 1 with five overview items.
+
 ## Stop-for-today checkpoint
 
 - What works now: ClearStep’s example, input, AI explanation, numbered steps, safety guidance, friendly errors, polished screen, and browser saving after reload.
