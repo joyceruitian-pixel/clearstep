@@ -80,6 +80,12 @@ Then open http://localhost:3000 in your browser.
 - Added a navy, ivory, coral, lavender, and teal visual system plus a Paste → Understand → Start journey to make the product feel more distinctive without adding clutter.
 - Tested the rendered page with a screenshot at a 319px mobile viewport: no horizontal overflow, Try ClearStep is visible, and Focus Mode still opens at Step 1 with five overview items.
 
+## Competition transformation round
+
+- Removed the repeated full before-and-after section so the hero preview is the main demonstration and the actual tool appears sooner.
+- Added explicit empty, loading, and success state handling, including protection against an older AI request replacing newer input.
+- Live browser verification showed success state as content only, then showed the empty state only after new text was typed; no horizontal overflow was found at a 363px viewport.
+
 ## Stop-for-today checkpoint
 
 - What works now: ClearStep’s example, input, AI explanation, numbered steps, safety guidance, friendly errors, polished screen, and browser saving after reload.

@@ -50,6 +50,30 @@ let currentSteps = [];
 let focusProgress = { index: 0, completed: [] };
 let currentAssignment = '';
 let hasSavedFocusProgress = false;
+let explanationRequestId = 0;
+
+function resetDisplayedResult() {
+  explanationRequestId += 1;
+  isLoading = false;
+  latestResult = null;
+  originalResult = null;
+  currentAssignment = '';
+  currentSteps = [];
+  focusProgress = { index: 0, completed: [] };
+  hasSavedFocusProgress = false;
+  explainLabel.textContent = 'Explain directions';
+  resultEmpty.hidden = false;
+  resultLoading.hidden = true;
+  resultContent.hidden = true;
+  resultActions.hidden = true;
+  completionStatus.hidden = true;
+  focusPanel.hidden = true;
+  focusButton.hidden = true;
+  focusResume.hidden = true;
+  focusContent.hidden = false;
+  copyStatus.textContent = '';
+  simplifyStatus.textContent = '';
+}
 
 function updateCount() {
   charCount.textContent = `${instructionsInput.value.length.toLocaleString()} / 12,000`;
@@ -57,6 +81,7 @@ function updateCount() {
 }
 
 exampleButtons.forEach((button) => button.addEventListener('click', () => {
+  resetDisplayedResult();
   exampleButtons.forEach((item) => {
     item.classList.toggle('selected', item === button);
     item.setAttribute('aria-pressed', String(item === button));
@@ -192,6 +217,7 @@ function resultToText(result) {
 }
 
 instructionsInput.addEventListener('input', () => {
+  resetDisplayedResult();
   exampleButtons.forEach((item) => {
     item.classList.remove('selected');
     item.setAttribute('aria-pressed', 'false');
@@ -200,16 +226,8 @@ instructionsInput.addEventListener('input', () => {
 });
 clearButton.addEventListener('click', () => {
   instructionsInput.value = '';
-  currentAssignment = '';
-  currentSteps = [];
-  focusProgress = { index: 0, completed: [] };
-  hasSavedFocusProgress = false;
-  resultContent.hidden = true;
-  resultEmpty.hidden = false;
+  resetDisplayedResult();
   savedLabel.textContent = 'Your device only';
-  resultActions.hidden = true;
-  completionStatus.hidden = true;
-  focusPanel.hidden = true;
   updateCount();
   instructionsInput.focus();
 });
@@ -292,6 +310,7 @@ restoreButton.addEventListener('click', () => {
 explainButton.addEventListener('click', async () => {
   const instructions = instructionsInput.value.trim();
   if (!instructions) { instructionsInput.focus(); return; }
+  const requestId = ++explanationRequestId;
   isLoading = true;
   updateCount();
   explainLabel.textContent = 'Thinking…';
@@ -305,6 +324,7 @@ explainButton.addEventListener('click', async () => {
     const response = await fetch('/api/explain', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ instructions }) });
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || 'Something went wrong.');
+    if (requestId !== explanationRequestId) return;
     latestResult = data.result;
     originalResult = data.result;
     currentAssignment = instructions;
@@ -312,8 +332,14 @@ explainButton.addEventListener('click', async () => {
     saveExplanation({ instructions, result: data.result, savedAt: new Date().toISOString() });
     savedLabel.textContent = 'Saved on this device';
   } catch (error) {
+    if (requestId !== explanationRequestId) return;
     showResult(`I couldn't explain that right now. ${error.message} Please compare with your teacher's original directions.`, true);
-  } finally { isLoading = false; explainLabel.textContent = 'Explain directions'; updateCount(); }
+  } finally {
+    if (requestId !== explanationRequestId) return;
+    isLoading = false;
+    explainLabel.textContent = 'Explain directions';
+    updateCount();
+  }
 });
 
 const savedItems = loadSavedExplanations();
