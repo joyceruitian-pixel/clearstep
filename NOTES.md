@@ -1,5 +1,7 @@
 # ClearStep notes
 
+After each save point, push it to GitHub.
+
 ## How to run it
 
 From this folder, run this one command:
