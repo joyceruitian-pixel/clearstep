@@ -57,6 +57,10 @@ function updateCount() {
 }
 
 exampleButtons.forEach((button) => button.addEventListener('click', () => {
+  exampleButtons.forEach((item) => {
+    item.classList.toggle('selected', item === button);
+    item.setAttribute('aria-pressed', String(item === button));
+  });
   instructionsInput.value = EXAMPLES[button.dataset.example];
   updateCount();
   instructionsInput.focus();
@@ -66,11 +70,13 @@ function addResultSection(title, items, type = 'paragraph') {
   if (!items || (Array.isArray(items) && items.length === 0)) return;
   const section = document.createElement('section');
   section.className = 'answer-section';
+  if (type === 'list') section.classList.add('steps-section');
   const heading = document.createElement('h3');
   heading.textContent = title;
   section.appendChild(heading);
   if (type === 'list') {
     const list = document.createElement('ol');
+    list.className = 'answer-list';
     items.forEach((item) => { const row = document.createElement('li'); row.textContent = item; list.appendChild(row); });
     section.appendChild(list);
   } else {
@@ -185,7 +191,13 @@ function resultToText(result) {
   return lines.join('\n');
 }
 
-instructionsInput.addEventListener('input', updateCount);
+instructionsInput.addEventListener('input', () => {
+  exampleButtons.forEach((item) => {
+    item.classList.remove('selected');
+    item.setAttribute('aria-pressed', 'false');
+  });
+  updateCount();
+});
 clearButton.addEventListener('click', () => {
   instructionsInput.value = '';
   currentAssignment = '';

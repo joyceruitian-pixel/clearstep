@@ -68,6 +68,12 @@ Then open http://localhost:3000 in your browser.
 - Verified the rendered page in a live browser, selected the Math example, reached a real three-step AI result, and opened Focus Mode at Step 1.
 - Still needs a careful phone-size visual pass and more student feedback before calling the design finished.
 
+## ClearStep UX upgrade
+
+- Added a direct Try ClearStep link, selected-state feedback for subject examples, a clearer loading message, and a more readable numbered-step path with subtle connecting lines.
+- Live browser checks confirmed the Try ClearStep action is visible, a Math example becomes selected, typing a new assignment clears the selection, and the existing explanation still renders five steps.
+- All 15 Focus Mode tests and JavaScript checks passed after the UI changes.
+
 ## Stop-for-today checkpoint
 
 - What works now: ClearStep’s example, input, AI explanation, numbered steps, safety guidance, friendly errors, polished screen, and browser saving after reload.

@@ -23,3 +23,4 @@ Round 22 | added 15 automated Focus Mode state tests | protected step numbering,
 Round 23 | added a real Explain More Simply action with a Show original return path | helped students reread difficult directions with shorter words while preserving the original teacher requirements
 Round 24 | added a compact Focus Mode step overview and an all-steps-checked message | made progress easier to understand without changing the student’s work
 Round 25 | redesigned the page around a connected two-column workspace with a Clarity in Motion hero rail and stronger responsive styling | made the relationship between confusing directions and clear steps easier to understand at a glance
+Round 26 | added a direct Try ClearStep action, selected example feedback, readable connected step rows, and gentle result transitions | made the first interaction and AI explanation easier to follow without adding clutter
