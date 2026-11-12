@@ -1,6 +1,7 @@
 const STORAGE_KEY = 'clearstep-saved-explanations';
 const FOCUS_KEY = 'clearstep-focus-progress';
 const REQUIREMENTS_KEY = 'clearstep-requirement-checks';
+const STEPS_KEY = 'clearstep-step-checks';
 
 const SAMPLE_ITEMS = [
   { instructions: 'Read pages 42–48 and write three details about how the main character changes.', result: 'Practice example: Read the assigned pages, notice changes in the character, and write three details. Ask your teacher if a page number or format is unclear.', sample: true },
@@ -46,4 +47,16 @@ export function loadRequirementChecks(requirements) {
 
 export function saveRequirementChecks(requirements, checked) {
   localStorage.setItem(REQUIREMENTS_KEY, JSON.stringify({ signature: requirements.join('|'), checked }));
+}
+
+export function loadStepChecks(steps, assignmentKey) {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STEPS_KEY));
+    if (saved?.signature === focusSignature(steps, assignmentKey)) return { checked: saved.checked || [], saved: true };
+  } catch {}
+  return { checked: [], saved: false };
+}
+
+export function saveStepChecks(steps, assignmentKey, checked) {
+  localStorage.setItem(STEPS_KEY, JSON.stringify({ signature: focusSignature(steps, assignmentKey), checked }));
 }

@@ -100,6 +100,14 @@ Then open http://localhost:3000 in your browser.
 - Tested the real Chapter 4 assignment: four ordered steps appeared, requirements stayed visible, and the AI did not write the student’s paragraph.
 - The browser tool used for this check could not change its viewport size, so mobile layout still needs a manual phone-size check.
 
+## MVP Goal 3 check
+
+- Each numbered step now has its own accessible checkbox, and a progress tracker shows the completed count and percentage.
+- Step completion is saved per assignment in localStorage, so switching assignments does not reuse the wrong progress.
+- Focus Mode and the main step list share the same completion state, including after a reload.
+- Tested the Chapter 5 assignment at 0/4, 1/4, 2/4, 1/4 after unchecking, and 4/4 with the completion message.
+- A real browser proof state showed 3 of 4 steps completed with one step still unchecked.
+
 ## Stop-for-today checkpoint
 
 - What works now: ClearStep’s example, input, AI explanation, numbered steps, safety guidance, friendly errors, polished screen, and browser saving after reload.

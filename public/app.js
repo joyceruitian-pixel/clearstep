@@ -1,4 +1,4 @@
-import { loadFocusProgress, loadRequirementChecks, loadSavedExplanations, saveExplanation, saveFocusProgress, saveRequirementChecks } from './storage.js';
+import { loadFocusProgress, loadRequirementChecks, loadSavedExplanations, loadStepChecks, saveExplanation, saveFocusProgress, saveRequirementChecks, saveStepChecks } from './storage.js';
 
 const instructionsInput = document.querySelector('#instructions');
 const explainButton = document.querySelector('#explain-button');
@@ -9,6 +9,11 @@ const resultLoading = document.querySelector('#result-loading');
 const resultContent = document.querySelector('#result-content');
 const completionStatus = document.querySelector('#completion-status');
 const simplerResultNote = document.querySelector('#simpler-result-note');
+const stepProgress = document.querySelector('#step-progress');
+const stepProgressLabel = document.querySelector('#step-progress-label');
+const stepProgressPercent = document.querySelector('#step-progress-percent');
+const stepProgressBar = document.querySelector('#step-progress-bar');
+const stepProgressMessage = document.querySelector('#step-progress-message');
 const resultActions = document.querySelector('#result-actions');
 const copyButton = document.querySelector('#copy-button');
 const copyStatus = document.querySelector('#copy-status');
@@ -50,6 +55,7 @@ let latestResult = null;
 let originalResult = null;
 let currentSteps = [];
 let currentStepHeadings = [];
+let stepChecks = [];
 let focusProgress = { index: 0, completed: [] };
 let currentAssignment = '';
 let hasSavedFocusProgress = false;
@@ -63,6 +69,7 @@ function resetDisplayedResult() {
   currentAssignment = '';
   currentSteps = [];
   currentStepHeadings = [];
+  stepChecks = [];
   focusProgress = { index: 0, completed: [] };
   hasSavedFocusProgress = false;
   explainLabel.textContent = 'Explain directions';
@@ -72,6 +79,7 @@ function resetDisplayedResult() {
   resultActions.hidden = true;
   completionStatus.hidden = true;
   simplerResultNote.hidden = true;
+  stepProgress.hidden = true;
   focusPanel.hidden = true;
   focusButton.hidden = true;
   focusResume.hidden = true;
@@ -107,8 +115,15 @@ function addResultSection(title, items, type = 'paragraph') {
   if (type === 'list') {
     const list = document.createElement('ol');
     list.className = 'answer-list';
-    items.forEach((item) => {
+    items.forEach((item, index) => {
       const row = document.createElement('li');
+      row.className = 'step-row';
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.className = 'step-checkbox';
+      checkbox.checked = stepChecks.includes(index);
+      checkbox.setAttribute('aria-label', `Mark step ${index + 1} complete`);
+      checkbox.addEventListener('change', () => setStepCompleted(index, checkbox.checked));
       const copy = document.createElement('div');
       copy.className = 'step-copy';
       const stepHeading = document.createElement('strong');
@@ -118,7 +133,8 @@ function addResultSection(title, items, type = 'paragraph') {
       stepDescription.className = 'step-description';
       stepDescription.textContent = item;
       copy.append(stepHeading, stepDescription);
-      row.appendChild(copy);
+      row.append(checkbox, copy);
+      row.classList.toggle('step-complete', checkbox.checked);
       list.appendChild(row);
     });
     section.appendChild(list);
@@ -128,6 +144,36 @@ function addResultSection(title, items, type = 'paragraph') {
     section.appendChild(text);
   }
   resultContent.appendChild(section);
+}
+
+function updateStepProgress() {
+  const total = currentSteps.length;
+  const completed = stepChecks.length;
+  const percent = total ? Math.round((completed / total) * 100) : 0;
+  stepProgressLabel.textContent = `${completed} of ${total} steps completed`;
+  stepProgressPercent.textContent = `${percent}%`;
+  stepProgressBar.setAttribute('aria-valuenow', String(percent));
+  stepProgressBar.querySelector('span').style.width = `${percent}%`;
+  stepProgressMessage.hidden = total === 0 || completed !== total;
+  resultContent.querySelectorAll('.step-row').forEach((row, index) => {
+    const checkbox = row.querySelector('.step-checkbox');
+    if (checkbox) {
+      checkbox.checked = stepChecks.includes(index);
+      row.classList.toggle('step-complete', checkbox.checked);
+    }
+  });
+}
+
+function setStepCompleted(index, completed) {
+  stepChecks = completed
+    ? [...new Set([...stepChecks, index])].sort((a, b) => a - b)
+    : stepChecks.filter((item) => item !== index);
+  saveStepChecks(currentSteps, currentAssignment, stepChecks);
+  focusProgress.completed = [...stepChecks];
+  saveFocusProgress(currentSteps, currentAssignment, focusProgress);
+  hasSavedFocusProgress = stepChecks.length > 0;
+  updateStepProgress();
+  if (!focusPanel.hidden) renderFocus();
 }
 
 function makeStepHeading(step) {
@@ -177,7 +223,7 @@ function renderFocus() {
   focusStepHeading.textContent = currentStepHeadings[index] || '';
   focusStep.textContent = currentSteps[index] || 'There are no steps to focus on yet.';
   focusProgressBar.style.width = `${ClearStepFocus.completedPercent(focusProgress.completed, total)}%`;
-  focusProgressLabel.textContent = `${focusProgress.completed.length} of ${total} steps completed`;
+  focusProgressLabel.textContent = `${stepChecks.length} of ${total} steps completed`;
   focusOverview.replaceChildren();
   currentSteps.forEach((step, stepIndex) => {
     const item = document.createElement('li');
@@ -196,11 +242,11 @@ function renderFocus() {
     item.appendChild(button);
     focusOverview.appendChild(item);
   });
-  focusCompleteMessage.hidden = total === 0 || focusProgress.completed.length !== total;
+  focusCompleteMessage.hidden = total === 0 || stepChecks.length !== total;
   focusPrevious.disabled = index === 0;
   focusNext.disabled = total === 0;
   focusNext.textContent = index >= total - 1 ? 'Review steps' : 'Next step';
-  const complete = focusProgress.completed.includes(index);
+  const complete = stepChecks.includes(index);
   focusComplete.textContent = complete ? 'Completed ✓' : 'Mark complete';
   focusComplete.setAttribute('aria-pressed', String(complete));
 }
@@ -213,6 +259,7 @@ function showResult(result, isError = false) {
   resultActions.hidden = isError;
   completionStatus.hidden = isError;
   simplerResultNote.hidden = isError || typeof result === 'string' || result === originalResult;
+  stepProgress.hidden = isError || typeof result === 'string';
   focusPanel.hidden = true;
   focusResume.hidden = true;
   focusContent.hidden = false;
@@ -223,6 +270,8 @@ function showResult(result, isError = false) {
   resultContent.replaceChildren();
   currentSteps = [];
   currentStepHeadings = [];
+  stepChecks = [];
+  stepProgress.hidden = true;
   if (isError || typeof result === 'string') {
     resultContent.textContent = result;
     focusButton.hidden = true;
@@ -231,13 +280,17 @@ function showResult(result, isError = false) {
   currentSteps = Array.isArray(result.steps) ? result.steps : [];
   currentStepHeadings = currentSteps.map(makeStepHeading);
   const savedProgress = loadFocusProgress(currentSteps, currentAssignment);
-  focusProgress = ClearStepFocus.normalizeProgress(savedProgress, currentSteps.length);
-  hasSavedFocusProgress = savedProgress.saved && (focusProgress.index > 0 || focusProgress.completed.length > 0);
+  const savedSteps = loadStepChecks(currentSteps, currentAssignment);
+  stepChecks = ClearStepFocus.normalizeProgress({ completed: savedSteps.saved ? savedSteps.checked : savedProgress.completed }, currentSteps.length).completed;
+  focusProgress = ClearStepFocus.normalizeProgress({ ...savedProgress, completed: stepChecks }, currentSteps.length);
+  hasSavedFocusProgress = savedProgress.saved && (focusProgress.index > 0 || stepChecks.length > 0);
   addResultSection('What your assignment means', result.summary);
   addResultSection('Steps to follow', result.steps, 'list');
   addResultSection('Things to ask your teacher', result.missingInformation, 'list');
   addRequirementChecklist(result.importantRequirements);
+  stepProgress.hidden = currentSteps.length === 0;
   focusButton.hidden = currentSteps.length === 0;
+  updateStepProgress();
 }
 
 function resultToText(result) {
@@ -280,7 +333,9 @@ focusButton.addEventListener('click', () => {
 resumeButton.addEventListener('click', () => { focusResume.hidden = true; focusContent.hidden = false; renderFocus(); });
 startOverButton.addEventListener('click', () => {
   focusProgress = { index: 0, completed: [] };
+  stepChecks = [];
   hasSavedFocusProgress = false;
+  saveStepChecks(currentSteps, currentAssignment, stepChecks);
   saveFocusProgress(currentSteps, currentAssignment, focusProgress);
   focusResume.hidden = true;
   focusContent.hidden = false;
@@ -301,10 +356,7 @@ focusNext.addEventListener('click', () => {
 });
 focusComplete.addEventListener('click', () => {
   const index = focusProgress.index;
-  focusProgress.completed = focusProgress.completed.includes(index) ? focusProgress.completed.filter((item) => item !== index) : [...focusProgress.completed, index];
-  saveFocusProgress(currentSteps, currentAssignment, focusProgress);
-  hasSavedFocusProgress = true;
-  renderFocus();
+  setStepCompleted(index, !stepChecks.includes(index));
 });
 copyButton.addEventListener('click', async () => {
   const text = resultToText(latestResult);
@@ -350,6 +402,7 @@ explainButton.addEventListener('click', async () => {
   resultContent.hidden = true;
   resultActions.hidden = true;
   completionStatus.hidden = true;
+  stepProgress.hidden = true;
   focusPanel.hidden = true;
   resultLoading.hidden = false;
   try {
