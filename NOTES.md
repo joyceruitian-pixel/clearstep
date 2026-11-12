@@ -86,6 +86,13 @@ Then open http://localhost:3000 in your browser.
 - Added explicit empty, loading, and success state handling, including protection against an older AI request replacing newer input.
 - Live browser verification showed success state as content only, then showed the empty state only after new text was typed; no horizontal overflow was found at a 363px viewport.
 
+## MVP feature check
+
+- Checked the main feature with a made-up reading assignment containing pages 12–18, a 200-word minimum, two themes, two examples, and a Friday deadline.
+- The real API response preserved those directions in simpler language and numbered steps without writing the paragraph.
+- Checked a made-up request to solve a math equation; ClearStep returned no solution steps, so it did not complete the homework.
+- No code fix was needed for this feature after the live checks. The current prompt and BRIEF.md safety rules are working as intended.
+
 ## Stop-for-today checkpoint
 
 - What works now: ClearStep’s example, input, AI explanation, numbered steps, safety guidance, friendly errors, polished screen, and browser saving after reload.
