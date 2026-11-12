@@ -8,6 +8,7 @@ const resultEmpty = document.querySelector('#result-empty');
 const resultLoading = document.querySelector('#result-loading');
 const resultContent = document.querySelector('#result-content');
 const completionStatus = document.querySelector('#completion-status');
+const simplerResultNote = document.querySelector('#simpler-result-note');
 const resultActions = document.querySelector('#result-actions');
 const copyButton = document.querySelector('#copy-button');
 const copyStatus = document.querySelector('#copy-status');
@@ -67,6 +68,7 @@ function resetDisplayedResult() {
   resultContent.hidden = true;
   resultActions.hidden = true;
   completionStatus.hidden = true;
+  simplerResultNote.hidden = true;
   focusPanel.hidden = true;
   focusButton.hidden = true;
   focusResume.hidden = true;
@@ -183,6 +185,7 @@ function showResult(result, isError = false) {
   resultContent.classList.toggle('error-result', isError);
   resultActions.hidden = isError;
   completionStatus.hidden = isError;
+  simplerResultNote.hidden = isError || typeof result === 'string' || result === originalResult;
   focusPanel.hidden = true;
   focusResume.hidden = true;
   focusContent.hidden = false;

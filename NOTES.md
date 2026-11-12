@@ -38,7 +38,7 @@ Then open http://localhost:3000 in your browser.
 
 ## Remaining limits
 
-- Optional features such as recent-history management, Explain More Simply, dark mode, and a real database remain in Maybe Later.
+- Recent-history management, dark mode, and a real database remain in Maybe Later. Explain More Simply is working and now marks the easier version clearly while keeping the original available.
 - More middle school student feedback is still the best next improvement for wording and usefulness.
 - The 30-case AI evaluation plan is not all complete yet; cases marked “Not run” need honest testing before being called passed.
 
