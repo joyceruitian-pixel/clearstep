@@ -93,6 +93,13 @@ Then open http://localhost:3000 in your browser.
 - Checked a made-up request to solve a math equation; ClearStep returned no solution steps, so it did not complete the homework.
 - No code fix was needed for this feature after the live checks. The current prompt and BRIEF.md safety rules are working as intended.
 
+## MVP Goal 2 check
+
+- Numbered steps now have short student-friendly headings, such as “Read Chapter 4” and “Find two examples,” while the full AI explanation stays underneath.
+- Focus Mode shows the matching heading and full step description and keeps the existing progress controls unchanged.
+- Tested the real Chapter 4 assignment: four ordered steps appeared, requirements stayed visible, and the AI did not write the student’s paragraph.
+- The browser tool used for this check could not change its viewport size, so mobile layout still needs a manual phone-size check.
+
 ## Stop-for-today checkpoint
 
 - What works now: ClearStep’s example, input, AI explanation, numbered steps, safety guidance, friendly errors, polished screen, and browser saving after reload.

@@ -18,6 +18,7 @@ const simplifyStatus = document.querySelector('#simplify-status');
 const focusButton = document.querySelector('#focus-button');
 const focusPanel = document.querySelector('#focus-panel');
 const focusTitle = document.querySelector('#focus-title');
+const focusStepHeading = document.querySelector('#focus-step-heading');
 const focusStep = document.querySelector('#focus-step');
 const focusProgressBar = document.querySelector('#focus-progress-bar');
 const focusProgressLabel = document.querySelector('#focus-progress-label');
@@ -48,6 +49,7 @@ let isLoading = false;
 let latestResult = null;
 let originalResult = null;
 let currentSteps = [];
+let currentStepHeadings = [];
 let focusProgress = { index: 0, completed: [] };
 let currentAssignment = '';
 let hasSavedFocusProgress = false;
@@ -60,6 +62,7 @@ function resetDisplayedResult() {
   originalResult = null;
   currentAssignment = '';
   currentSteps = [];
+  currentStepHeadings = [];
   focusProgress = { index: 0, completed: [] };
   hasSavedFocusProgress = false;
   explainLabel.textContent = 'Explain directions';
@@ -104,7 +107,20 @@ function addResultSection(title, items, type = 'paragraph') {
   if (type === 'list') {
     const list = document.createElement('ol');
     list.className = 'answer-list';
-    items.forEach((item) => { const row = document.createElement('li'); row.textContent = item; list.appendChild(row); });
+    items.forEach((item) => {
+      const row = document.createElement('li');
+      const copy = document.createElement('div');
+      copy.className = 'step-copy';
+      const stepHeading = document.createElement('strong');
+      stepHeading.className = 'step-heading';
+      stepHeading.textContent = makeStepHeading(item);
+      const stepDescription = document.createElement('span');
+      stepDescription.className = 'step-description';
+      stepDescription.textContent = item;
+      copy.append(stepHeading, stepDescription);
+      row.appendChild(copy);
+      list.appendChild(row);
+    });
     section.appendChild(list);
   } else {
     const text = document.createElement('p');
@@ -112,6 +128,16 @@ function addResultSection(title, items, type = 'paragraph') {
     section.appendChild(text);
   }
   resultContent.appendChild(section);
+}
+
+function makeStepHeading(step) {
+  const text = step.trim().replace(/[.!?]+$/, '');
+  const match = text.match(/^(Read|Review|Identify|Find|Write|Include|Solve|Show|Observe|Record|List|Explain|Complete|Circle|Think|Look|Use|Analyze|Compare|Describe|Submit|Answer|Ask|Check|Gather|Choose|Calculate|Draw|Create|Practice|Study)\b\s*(.*)$/i);
+  if (!match) return text.split(/\s+/).slice(0, 5).join(' ');
+  const verb = match[1].toLowerCase();
+  const headingVerb = { identify: 'Find', look: 'Look for', use: 'Use', analyze: 'Analyze', observe: 'Observe', record: 'Record', list: 'List', explain: 'Explain', complete: 'Complete', circle: 'Mark', choose: 'Choose', calculate: 'Calculate', describe: 'Describe', compare: 'Compare', gather: 'Gather' }[verb] || match[1];
+  const object = match[2].split(/\s+(?:and|that|how|explaining|from|so|to|of|in|on|for|with)\s+/i)[0].split(/[,;:]\s*/)[0].split(/\s+/).slice(0, 4).join(' ');
+  return `${headingVerb}${object ? ` ${object}` : ''}`;
 }
 
 function addRequirementChecklist(requirements) {
@@ -148,6 +174,7 @@ function renderFocus() {
   focusProgress = ClearStepFocus.normalizeProgress(focusProgress, total);
   const index = focusProgress.index;
   focusTitle.textContent = `Step ${total ? index + 1 : 0} of ${total}`;
+  focusStepHeading.textContent = currentStepHeadings[index] || '';
   focusStep.textContent = currentSteps[index] || 'There are no steps to focus on yet.';
   focusProgressBar.style.width = `${ClearStepFocus.completedPercent(focusProgress.completed, total)}%`;
   focusProgressLabel.textContent = `${focusProgress.completed.length} of ${total} steps completed`;
@@ -195,12 +222,14 @@ function showResult(result, isError = false) {
   restoreButton.hidden = isError || typeof result === 'string' || result === originalResult;
   resultContent.replaceChildren();
   currentSteps = [];
+  currentStepHeadings = [];
   if (isError || typeof result === 'string') {
     resultContent.textContent = result;
     focusButton.hidden = true;
     return;
   }
   currentSteps = Array.isArray(result.steps) ? result.steps : [];
+  currentStepHeadings = currentSteps.map(makeStepHeading);
   const savedProgress = loadFocusProgress(currentSteps, currentAssignment);
   focusProgress = ClearStepFocus.normalizeProgress(savedProgress, currentSteps.length);
   hasSavedFocusProgress = savedProgress.saved && (focusProgress.index > 0 || focusProgress.completed.length > 0);
