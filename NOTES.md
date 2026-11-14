@@ -112,8 +112,9 @@ Then open http://localhost:3000 in your browser.
 
 - Ran all 15 required inputs through the real `/api/explain` route before and after a focused AI-instruction improvement.
 - The first run had 8 Right, 5 Partly right, and 2 Wrong results: 53.3% fully right.
-- The second run had 12 Right, 3 Partly right, and 0 Wrong results: 80.0% fully right.
-- The remaining partly-right cases add plausible details that were not explicitly in the directions; they are documented honestly in `MVP_GOAL_4_TEST_RESULTS.md`.
+- An intermediate run had 12 Right, 3 Partly right, and 0 Wrong results: 80.0% fully right.
+- The final full rerun had 15 Right, 0 Partly right, and 0 Wrong results: 100.0% fully right.
+- The final run and all actual responses are documented honestly in `MVP_GOAL_4_TEST_RESULTS.md`.
 - Live website checks confirmed normal explanations, Explain more simply, exact requirements, numbered steps, checkboxes, progress, and safe redirects still work.
 
 ## Interactive website transformation
