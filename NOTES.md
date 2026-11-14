@@ -108,6 +108,14 @@ Then open http://localhost:3000 in your browser.
 - Tested the Chapter 5 assignment at 0/4, 1/4, 2/4, 1/4 after unchecking, and 4/4 with the completion message.
 - A real browser proof state showed 3 of 4 steps completed with one step still unchecked.
 
+## MVP Goal 4 check
+
+- Ran all 15 required inputs through the real `/api/explain` route before and after a focused AI-instruction improvement.
+- The first run had 8 Right, 5 Partly right, and 2 Wrong results: 53.3% fully right.
+- The second run had 12 Right, 3 Partly right, and 0 Wrong results: 80.0% fully right.
+- The remaining partly-right cases add plausible details that were not explicitly in the directions; they are documented honestly in `MVP_GOAL_4_TEST_RESULTS.md`.
+- Live website checks confirmed normal explanations, Explain more simply, exact requirements, numbered steps, checkboxes, progress, and safe redirects still work.
+
 ## Stop-for-today checkpoint
 
 - What works now: ClearStep’s example, input, AI explanation, numbered steps, safety guidance, friendly errors, polished screen, and browser saving after reload.
