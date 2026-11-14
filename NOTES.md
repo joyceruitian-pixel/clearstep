@@ -116,6 +116,13 @@ Then open http://localhost:3000 in your browser.
 - The remaining partly-right cases add plausible details that were not explicitly in the directions; they are documented honestly in `MVP_GOAL_4_TEST_RESULTS.md`.
 - Live website checks confirmed normal explanations, Explain more simply, exact requirements, numbered steps, checkboxes, progress, and safe redirects still work.
 
+## Interactive website transformation
+
+- The hero now includes a clearly labeled, replayable “Before → After” sample that uses local HTML/CSS only and never pretends to be a live AI response.
+- The main workspace now keeps input and results side by side on wide screens and stacks cleanly on small screens.
+- Empty and loading states are more compact and purposeful, sample buttons have clearer labels, and results/steps use subtle state-change motion with reduced-motion support.
+- Verified the replay button, empty-state separation, English sample selection, and no horizontal overflow at a 388px browser viewport.
+
 ## Stop-for-today checkpoint
 
 - What works now: ClearStep’s example, input, AI explanation, numbered steps, safety guidance, friendly errors, polished screen, and browser saving after reload.

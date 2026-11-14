@@ -19,14 +19,15 @@
         <h1 id="page-title">Confusing homework?<br><em>Let’s make it clear.</em></h1>
         <p class="hero-copy">Paste your assignment instructions and ClearStep will break them into simple, easy-to-follow steps—so you can focus on learning.</p>
         <p class="hero-note"><span>✦</span> Made for the directions that make you stop and think, “Wait… what do I do?”</p>
-        <a class="hero-cta" href="#workspace">Try ClearStep <span aria-hidden="true">↓</span></a>
+        <div class="hero-actions"><a class="hero-cta" href="#workspace">Try ClearStep <span aria-hidden="true">↓</span></a><a class="hero-secondary" href="#method">See how it works <span aria-hidden="true">↘</span></a></div>
       </div>
       <div class="hero-preview" aria-label="Illustrative ClearStep transformation preview">
-        <div class="preview-window">
+        <div id="preview-demo" class="preview-window">
           <div class="preview-topline"><span><i></i><i></i><i></i></span><b>ClearStep preview</b><em>DEMO</em></div>
           <div class="preview-before"><span class="preview-label">Before</span><p>Analyze the author’s use of characterization and support your interpretation with textual evidence.</p><span class="preview-scribble">too much at once?</span></div>
           <div class="preview-transform" aria-hidden="true"><span>↓</span></div>
-          <div class="preview-after"><span class="preview-label">After</span><div><b>01</b><span>Think about how the character is described.</span></div><div><b>02</b><span>Find details that show personality.</span></div><div><b>03</b><span>Use evidence from the text.</span></div></div>
+          <div class="preview-after" aria-live="polite"><span class="preview-label">After</span><div><b>01</b><span>Think about how the character is described.</span></div><div><b>02</b><span>Find details that show personality.</span></div><div><b>03</b><span>Use evidence from the text.</span></div></div>
+          <div class="preview-footer"><span id="preview-status">Illustrative sample · not live AI</span><button id="preview-demo-button" class="preview-button" type="button">Replay demo <span aria-hidden="true">↗</span></button></div>
         </div>
       </div>
     </section>
@@ -36,7 +37,7 @@
         <div class="card-heading"><div><span class="step-number">1</span><h2>Paste your directions</h2></div><span class="optional">Leave out names and private details</span></div>
         <label for="instructions" class="sr-only">Homework instructions</label>
         <textarea id="instructions" maxlength="12000" placeholder="Example: Read pages 42–48. In your notebook, write three details that show how the main character changes. Use a quote for each detail."></textarea>
-        <div class="example-picker" aria-label="Choose a sample assignment"><span>Try a sample:</span><button class="example-button" data-example="math" type="button">Math</button><button class="example-button" data-example="english" type="button">English</button><button class="example-button" data-example="science" type="button">Science</button><button class="example-button" data-example="history" type="button">History</button><button class="example-button" data-example="spanish" type="button">Spanish</button></div>
+        <div class="example-picker" aria-label="Choose a sample assignment"><span>Not sure what to try?</span><button class="example-button" data-example="math" type="button"><span aria-hidden="true">∑</span> Math</button><button class="example-button" data-example="english" type="button"><span aria-hidden="true">Aa</span> English</button><button class="example-button" data-example="science" type="button"><span aria-hidden="true">✦</span> Science</button><button class="example-button" data-example="history" type="button"><span aria-hidden="true">◷</span> History</button><button class="example-button" data-example="spanish" type="button"><span aria-hidden="true">文</span> Spanish</button></div>
         <div class="input-footer"><span id="char-count">0 / 12,000</span><div class="input-actions"><button id="clear-button" class="secondary-button" type="button">Clear</button><button id="explain-button" class="primary-button" type="button"><span id="explain-label">Explain directions</span><span class="arrow">→</span></button></div></div>
         <p class="safety-hint"><span>ⓘ</span> ClearStep explains directions only. Your teacher’s instructions always come first.</p>
       </div>
@@ -47,8 +48,8 @@
         <div class="card-heading"><div><span class="step-number pale">2</span><h2>See your clear steps</h2></div><span id="saved-label" class="saved-label">Your device only</span></div>
         <p id="completion-status" class="completion-status" role="status" hidden>Done — your clear steps are ready.</p>
         <p id="simpler-result-note" class="simpler-result-note" role="status" hidden>Even simpler version · Same assignment, easier words.</p>
-        <div id="result-empty" class="result-empty"><div class="spark">✦</div><p>Your clearer directions will appear here.</p><span>Paste your directions above, then choose Explain directions.</span></div>
-        <div id="result-loading" class="result-loading" role="status" aria-live="polite" hidden><div class="loader"></div><p>Making your directions clearer…</p><span>Keep this window open while ClearStep works.</span></div>
+        <div id="result-empty" class="result-empty"><div class="empty-visual" aria-hidden="true"><span>?</span><i>→</i><b>✓</b></div><p>Your clear steps will show up here.</p><span>Paste your directions and we’ll help you figure out what to do next.</span></div>
+        <div id="result-loading" class="result-loading" role="status" aria-live="polite" hidden><div class="loading-orbit" aria-hidden="true"><i></i><i></i><i></i></div><p id="loading-message">ClearStep is organizing your directions…</p><span id="loading-note">Illustrative progress while your explanation loads.</span></div>
         <section id="step-progress" class="step-progress" aria-label="Homework step progress" hidden><div class="step-progress-header"><div><span class="progress-kicker">Your progress</span><strong id="step-progress-label">0 of 0 steps completed</strong></div><span id="step-progress-percent">0%</span></div><div id="step-progress-bar" class="step-progress-bar" role="progressbar" aria-label="Homework steps completed" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><p id="step-progress-message" class="step-progress-message" role="status" hidden>All steps checked. Nice work!</p></section>
         <div id="result-content" class="result-content" aria-live="polite" hidden></div>
         <div id="result-actions" class="result-actions" hidden><button id="copy-button" class="secondary-button" type="button">Copy explanation</button><button id="simplify-button" class="secondary-button" type="button">Explain more simply</button><button id="restore-button" class="secondary-button" type="button" hidden>Show original</button><button id="focus-button" class="primary-button" type="button">Start Focus Mode</button><span id="copy-status" role="status"></span><span id="simplify-status" role="status"></span></div>
@@ -56,7 +57,7 @@
       </div>
     </section>
 
-    <section class="process-journey" aria-label="How ClearStep works">
+    <section id="method" class="process-journey" aria-label="How ClearStep works">
       <div class="journey-intro"><span class="eyebrow">The ClearStep method</span><h2>Make the next step<br><em>feel possible.</em></h2></div>
       <ol class="journey-list"><li><span class="journey-number">01</span><div><strong>Paste</strong><p>Bring the directions that made you pause.</p></div></li><li><span class="journey-number">02</span><div><strong>Understand</strong><p>See the assignment in simpler words.</p></div></li><li><span class="journey-number">03</span><div><strong>Start</strong><p>Move through the work one step at a time.</p></div></li></ol>
     </section>

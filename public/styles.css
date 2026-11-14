@@ -108,3 +108,68 @@ footer { max-width: 1240px; padding: 25px 34px 34px; }
 .difference { margin-top: 78px; }
 @media (max-width: 850px) { .hero { min-height: 0; padding: 48px 34px; }.hero-preview { max-width: 460px; width: 100%; margin: 12px auto 0; }.process-journey { grid-template-columns: 1fr; gap: 25px; } }
 @media (max-width: 620px) { .topbar { padding-left: 18px; padding-right: 18px; }.hero { padding: 37px 23px 29px; border-radius: 23px; }.hero h1 { font-size: 3rem; }.hero-copy { font-size: .93rem; }.hero-preview { transform: none; }.preview-before { transform: translateX(-7px); }.preview-after { transform: translateX(7px); }.process-journey { margin-bottom: 45px; padding: 28px 22px; border-radius: 19px; }.journey-list { grid-template-columns: 1fr; gap: 0; }.journey-list li, .journey-list li + li { grid-template-columns: 34px 1fr; border-left: 0; padding: 15px 0; }.journey-list li::after { content: "↓"; top: auto; right: auto; bottom: -9px; left: 12px; }.journey-list li:last-child::after { display: none; }.journey-number { padding-top: 2px; }.workspace::before { top: -23px; } }
+
+/* Interactive workspace finish */
+.hero-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 18px; }
+.hero-secondary { display: inline-flex; align-items: center; gap: 8px; margin-top: 24px; color: #e5f3ef; font-size: .78rem; font-weight: 800; text-decoration: none; }
+.hero-secondary:hover { color: var(--coral); }
+.preview-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 5px 2px; color: #b9d0d8; font-size: .58rem; }
+.preview-button { border: 1px solid rgba(255,255,255,.28); border-radius: 999px; padding: 7px 10px; color: #fff; background: rgba(255,255,255,.1); font: 800 .6rem inherit; cursor: pointer; }
+.preview-button:hover, .preview-button:focus-visible { border-color: var(--coral); background: rgba(242,138,101,.2); }
+.preview-button span { margin-left: 4px; color: #f7d681; }
+.preview-window.is-replaying .preview-before { animation: preview-before-shift 420ms ease both; }
+.preview-window.is-replaying .preview-transform { animation: preview-arrow-pop 420ms ease both; }
+.preview-window.is-replaying .preview-after > div { animation: preview-step-in 420ms ease both; }
+.preview-window.is-replaying .preview-after > div:nth-of-type(2) { animation-delay: 120ms; }
+.preview-window.is-replaying .preview-after > div:nth-of-type(3) { animation-delay: 240ms; }
+@keyframes preview-before-shift { 50% { transform: translateX(-26px) rotate(-1deg); opacity: .55; } to { transform: translateX(-18px); opacity: 1; } }
+@keyframes preview-arrow-pop { 50% { transform: scale(1.28); color: var(--coral); } to { transform: scale(1); } }
+@keyframes preview-step-in { from { opacity: .25; transform: translateX(9px); } to { opacity: 1; transform: translateX(0); } }
+.workspace { max-width: 1120px; gap: 22px; }
+.workspace > .connector { display: none; }
+.workspace > .input-card { grid-column: 1; grid-row: 1; }
+.workspace > .result-card { grid-column: 2; grid-row: 1; position: relative; }
+.input-card, .result-card { min-height: 500px; }
+.input-card textarea { min-height: 220px; }
+.example-picker > span { flex-basis: 100%; color: var(--teal-dark); font-weight: 800; }
+.example-picker .example-button { display: inline-flex; align-items: center; gap: 5px; }
+.example-picker .example-button > span { display: inline-grid; place-items: center; min-width: 17px; height: 17px; border-radius: 5px; color: var(--teal); background: var(--mint); font-size: .58rem; font-weight: 900; }
+.result-empty, .result-loading { min-height: 278px; }
+.empty-visual { display: flex; align-items: center; gap: 9px; margin-bottom: 8px; color: var(--teal); }
+.empty-visual span, .empty-visual b { display: grid; place-items: center; width: 37px; height: 37px; border-radius: 12px; font-size: 1.05rem; font-weight: 900; }
+.empty-visual span { color: var(--navy); background: var(--lavender); }
+.empty-visual b { color: var(--teal-dark); background: #dff4ec; }
+.empty-visual i { color: var(--coral); font-size: 1.25rem; font-style: normal; }
+.loading-orbit { display: flex; align-items: center; gap: 7px; height: 38px; margin-bottom: 7px; }
+.loading-orbit i { display: block; width: 9px; height: 9px; border-radius: 50%; background: var(--coral); animation: loading-dot 850ms ease-in-out infinite; }
+.loading-orbit i:nth-child(2) { animation-delay: 140ms; background: var(--yellow); }
+.loading-orbit i:nth-child(3) { animation-delay: 280ms; background: var(--teal); }
+@keyframes loading-dot { 0%, 100% { transform: translateY(4px); opacity: .45; } 50% { transform: translateY(-4px); opacity: 1; } }
+.result-content:not([hidden]) .steps-section .step-row { animation: step-arrive 260ms ease both; }
+.result-content:not([hidden]) .steps-section .step-row:nth-child(2) { animation-delay: 60ms; }
+.result-content:not([hidden]) .steps-section .step-row:nth-child(3) { animation-delay: 120ms; }
+.result-content:not([hidden]) .steps-section .step-row:nth-child(4) { animation-delay: 180ms; }
+@keyframes step-arrive { from { opacity: .1; transform: translateX(7px); } to { opacity: 1; transform: translateX(0); } }
+@media (max-width: 920px) {
+  .workspace { grid-template-columns: 1fr; }
+  .workspace > .input-card, .workspace > .result-card { grid-column: 1; grid-row: auto; }
+  .workspace > .connector { display: grid; grid-column: 1; height: 34px; }
+  .input-card, .result-card { min-height: 0; }
+}
+@media (max-width: 620px) {
+  .page-shell { padding-top: 30px; }
+  .hero-actions { gap: 12px; }
+  .hero-secondary { margin-top: 14px; }
+  .workspace { gap: 0; }
+  .workspace::before { top: -20px; }
+  .input-card textarea { min-height: 185px; }
+  .preview-footer { align-items: flex-start; flex-direction: column; }
+  .preview-button { align-self: flex-start; }
+  .step-progress-header strong { font-size: .76rem; }
+  .step-row { grid-template-columns: 28px 22px minmax(0,1fr) !important; gap: 9px !important; }
+  .step-heading { font-size: .82rem; }
+  .step-description { font-size: .82rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .preview-window.is-replaying .preview-before, .preview-window.is-replaying .preview-transform, .preview-window.is-replaying .preview-after > div, .result-content:not([hidden]) .steps-section .step-row { animation: none; }
+}

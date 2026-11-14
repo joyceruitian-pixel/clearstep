@@ -6,6 +6,8 @@ const clearButton = document.querySelector('#clear-button');
 const charCount = document.querySelector('#char-count');
 const resultEmpty = document.querySelector('#result-empty');
 const resultLoading = document.querySelector('#result-loading');
+const loadingMessage = document.querySelector('#loading-message');
+const loadingNote = document.querySelector('#loading-note');
 const resultContent = document.querySelector('#result-content');
 const completionStatus = document.querySelector('#completion-status');
 const simplerResultNote = document.querySelector('#simpler-result-note');
@@ -41,6 +43,9 @@ const startOverButton = document.querySelector('#start-over-button');
 const exampleButtons = document.querySelectorAll('[data-example]');
 const explainLabel = document.querySelector('#explain-label');
 const savedLabel = document.querySelector('#saved-label');
+const previewDemo = document.querySelector('#preview-demo');
+const previewDemoButton = document.querySelector('#preview-demo-button');
+const previewStatus = document.querySelector('#preview-status');
 
 const EXAMPLES = {
   math: 'Solve problems 1–10 on page 76. Show your work for each problem and circle your final answers.',
@@ -60,8 +65,34 @@ let focusProgress = { index: 0, completed: [] };
 let currentAssignment = '';
 let hasSavedFocusProgress = false;
 let explanationRequestId = 0;
+let loadingMessageTimer = null;
+
+const loadingMessages = [
+  'ClearStep is organizing your directions…',
+  'ClearStep is finding the important details…',
+  'ClearStep is shaping clear next steps…'
+];
+
+function startLoadingMessages() {
+  let index = 0;
+  loadingMessage.textContent = loadingMessages[index];
+  loadingNote.textContent = 'Illustrative progress while your explanation loads.';
+  window.clearInterval(loadingMessageTimer);
+  loadingMessageTimer = window.setInterval(() => {
+    index = (index + 1) % loadingMessages.length;
+    loadingMessage.textContent = loadingMessages[index];
+  }, 1100);
+}
+
+function stopLoadingMessages() {
+  window.clearInterval(loadingMessageTimer);
+  loadingMessageTimer = null;
+  loadingMessage.textContent = loadingMessages[0];
+  loadingNote.textContent = 'Illustrative progress while your explanation loads.';
+}
 
 function resetDisplayedResult() {
+  stopLoadingMessages();
   explanationRequestId += 1;
   isLoading = false;
   latestResult = null;
@@ -87,6 +118,14 @@ function resetDisplayedResult() {
   copyStatus.textContent = '';
   simplifyStatus.textContent = '';
 }
+
+previewDemoButton?.addEventListener('click', () => {
+  previewDemo.classList.remove('is-replaying');
+  void previewDemo.offsetWidth;
+  previewDemo.classList.add('is-replaying');
+  previewStatus.textContent = 'Sample transformed · not live AI';
+  window.setTimeout(() => { previewStatus.textContent = 'Illustrative sample · not live AI'; }, 1800);
+});
 
 function updateCount() {
   charCount.textContent = `${instructionsInput.value.length.toLocaleString()} / 12,000`;
@@ -405,6 +444,7 @@ explainButton.addEventListener('click', async () => {
   stepProgress.hidden = true;
   focusPanel.hidden = true;
   resultLoading.hidden = false;
+  startLoadingMessages();
   try {
     const response = await fetch('/api/explain', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ instructions }) });
     const data = await response.json();
@@ -420,6 +460,7 @@ explainButton.addEventListener('click', async () => {
     if (requestId !== explanationRequestId) return;
     showResult(`I couldn't explain that right now. ${error.message} Please compare with your teacher's original directions.`, true);
   } finally {
+    stopLoadingMessages();
     if (requestId !== explanationRequestId) return;
     isLoading = false;
     explainLabel.textContent = 'Explain directions';
