@@ -415,7 +415,7 @@ simplifyButton.addEventListener('click', async () => {
   try {
     const response = await fetch('/api/explain-simply', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ instructions: currentAssignment }) });
     const data = await response.json();
-    if (!response.ok) throw new Error(data.error || 'Something went wrong.');
+    if (!response.ok) throw new Error(typeof data.error === 'string' ? data.error : data.error?.message || 'Something went wrong.');
     latestResult = data.result;
     showResult(latestResult);
   } catch (error) {
@@ -448,7 +448,7 @@ explainButton.addEventListener('click', async () => {
   try {
     const response = await fetch('/api/explain', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ instructions }) });
     const data = await response.json();
-    if (!response.ok) throw new Error(data.error || 'Something went wrong.');
+    if (!response.ok) throw new Error(typeof data.error === 'string' ? data.error : data.error?.message || 'Something went wrong.');
     if (requestId !== explanationRequestId) return;
     latestResult = data.result;
     originalResult = data.result;

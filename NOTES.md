@@ -17,10 +17,11 @@ Then open http://localhost:3000 in your browser.
 - Version 1 focuses on one job: paste confusing homework directions and choose Explain it.
 - The AI returns a short explanation and clear steps without doing the assignment.
 - The “Try an example” button fills in made-up homework directions for a quick demonstration.
-- The server reads the OpenAI key only from `.env`; the browser never receives it.
+- The server reads only the MindDo lookup settings from `.env`; the browser never receives the AI key.
+- The server gets the AI key through the server-only `getKey()` helper, which asks MindDo for a fresh key when needed; the browser never receives the key or token.
 - The server sends `BRIEF.md` as the AI system instructions for every explanation request.
 - The OpenAI model is `gpt-4o-mini`.
-- Models available to this key with “luna” in the name: `gpt-5.6-luna` and `gpt-6-luna`.
+- Models available to this key with “luna” in the name: `gpt-5.6-luna`.
 - The button shows “Thinking…” while waiting and is disabled to prevent double requests.
 - A completion message says “Done — your clear steps are ready” after a successful explanation.
 - Focus Mode shows one AI-generated step at a time, supports completion and navigation, and restores progress locally after reload.

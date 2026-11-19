@@ -12,12 +12,16 @@ function sendJson(response, statusCode, data) {
   response.end(JSON.stringify(data));
 }
 
+function sendError(response, statusCode, message, fix) {
+  console.error(fix);
+  return sendJson(response, statusCode, { error: { message, fix } });
+}
+
 function serveFile(requestPath, response) {
   const cleanPath = requestPath === '/' ? '/index.html' : requestPath;
   const filePath = path.normalize(path.join(publicDir, cleanPath));
   if (!filePath.startsWith(publicDir) || !fs.existsSync(filePath)) {
-    response.writeHead(404);
-    response.end('Not found');
+    sendError(response, 404, 'That page was not found.', 'Check the URL and try again.');
     return;
   }
   response.writeHead(200, { 'Content-Type': mimeTypes[path.extname(filePath)] || 'application/octet-stream' });
@@ -41,17 +45,18 @@ const server = http.createServer(async (request, response) => {
     try {
       const payload = JSON.parse(await readBody(request));
       const instructions = typeof payload.instructions === 'string' ? payload.instructions.trim() : '';
-      if (!instructions) return sendJson(response, 400, { error: 'Please paste your homework instructions first.' });
-      if (instructions.length > 12000) return sendJson(response, 400, { error: 'That is a little too long. Try pasting the most important directions.' });
+      if (!instructions) return sendError(response, 400, 'Please paste your homework instructions first.', 'Paste the directions into the box, then try again.');
+      if (instructions.length > 12000) return sendError(response, 400, 'That is a little too long. Try pasting the most important directions.', 'Shorten the pasted directions and try again.');
       const result = await explainInstructions(instructions, { simpler: request.url === '/api/explain-simply' });
       return sendJson(response, 200, { result });
     } catch (error) {
-      const message = error && error.code === 'OPENAI_AUTH' ? 'I could not connect to the AI. Please check the key in your .env file.' : 'I could not explain that right now. Please check your key and internet connection, then try again.';
-      return sendJson(response, 502, { error: message });
+      const message = error?.message || 'I could not explain that right now.';
+      const fix = error?.fix || 'Check the server connection and try again.';
+      return sendError(response, 502, message, fix);
     }
   }
   if (request.method === 'GET') return serveFile(request.url.split('?')[0], response);
-  sendJson(response, 405, { error: 'Method not allowed.' });
+  sendError(response, 405, 'That request method is not allowed.', 'Try loading the page again or use the Explain action.');
 });
 
 server.listen(PORT, () => console.log(`ClearStep is running at http://localhost:${PORT}`));
