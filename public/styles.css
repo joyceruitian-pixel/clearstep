@@ -118,6 +118,23 @@ footer { max-width: 1240px; padding: 25px 34px 34px; }
 /* Interactive workspace finish */
 .hero-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 18px; }
 .hero-secondary { display: inline-flex; align-items: center; gap: 8px; margin-top: 24px; color: #e5f3ef; font-size: .78rem; font-weight: 800; text-decoration: none; }
+
+/* Student privacy reminder: visible before typing, with a compact accessible disclosure. */
+.privacy-reminder { display: flex; align-items: flex-start; gap: 12px; margin: 0 0 14px; padding: 13px 14px; border: 1px solid #c9dfd8; border-radius: 13px; color: var(--navy); background: #f1faf6; }
+.privacy-reminder-icon { display: grid; place-items: center; flex: 0 0 auto; width: 27px; height: 27px; border-radius: 9px; color: var(--teal-dark); background: #d8eee7; font-size: .95rem; font-weight: 900; line-height: 1; }
+.privacy-reminder-copy { min-width: 0; }
+.privacy-reminder h3 { margin: 0 0 3px; color: var(--navy); font-size: .83rem; line-height: 1.3; }
+.privacy-reminder p { margin: 0; color: #46636a; font-size: .73rem; line-height: 1.5; }
+.privacy-reminder .privacy-why { margin-top: 5px; color: var(--teal-dark); font-weight: 700; }
+.privacy-details { margin-top: 8px; color: var(--teal-dark); font-size: .73rem; }
+.privacy-details summary { width: fit-content; cursor: pointer; font-weight: 850; }
+.privacy-details summary::marker { color: var(--coral); }
+.privacy-details summary:focus-visible { outline: 3px solid #d08b25; outline-offset: 3px; border-radius: 3px; }
+.privacy-details-content { margin-top: 8px; padding: 9px 11px; border-left: 2px solid #9bd8ca; color: #46636a; background: rgba(255,255,255,.58); }
+.privacy-details-content p { font-size: .72rem; }
+.privacy-details-content ul { margin: 5px 0 6px; padding-left: 19px; }
+.privacy-details-content li { padding: 2px 0; line-height: 1.45; }
+@media (max-width: 620px) { .privacy-reminder { padding: 12px; }.privacy-reminder p, .privacy-details, .privacy-details-content p { font-size: .72rem; } }
 .hero-secondary:hover { color: var(--coral); }
 .preview-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 5px 2px; color: #b9d0d8; font-size: .58rem; }
 .preview-button { border: 1px solid rgba(255,255,255,.28); border-radius: 999px; padding: 7px 10px; color: #fff; background: rgba(255,255,255,.1); font: 800 .6rem inherit; cursor: pointer; }

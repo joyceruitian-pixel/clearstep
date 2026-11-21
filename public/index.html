@@ -34,8 +34,28 @@
 
     <section id="workspace" class="workspace" aria-label="Explain homework instructions">
       <div class="input-card card">
-        <div class="card-heading"><div><span class="step-number">1</span><h2>Paste your directions</h2></div><span class="optional">Leave out names and private details</span></div>
+        <div class="card-heading"><div><span class="step-number">1</span><h2>Paste your directions</h2></div></div>
         <label for="instructions" class="sr-only">Homework instructions</label>
+        <aside class="privacy-reminder" aria-labelledby="privacy-reminder-title">
+          <div class="privacy-reminder-icon" aria-hidden="true">✦</div>
+          <div class="privacy-reminder-copy">
+            <h3 id="privacy-reminder-title">Keep your information private.</h3>
+            <p>Don’t include full names, addresses, phone numbers, school names, passwords, or anyone else’s personal information.</p>
+            <p class="privacy-why">ClearStep only needs your assignment directions, not your personal details.</p>
+            <details class="privacy-details">
+              <summary>What should I leave out?</summary>
+              <div class="privacy-details-content">
+                <p>Leave out:</p>
+                <ul>
+                  <li>Full names, home addresses, phone numbers, and email addresses</li>
+                  <li>School names, student ID numbers, and passwords</li>
+                  <li>Another student’s personal information</li>
+                </ul>
+                <p>You can replace names with general words like “Student A” or “my teacher.”</p>
+              </div>
+            </details>
+          </div>
+        </aside>
         <textarea id="instructions" maxlength="12000" placeholder="Example: Read pages 42–48. In your notebook, write three details that show how the main character changes. Use a quote for each detail."></textarea>
         <div class="example-picker" aria-label="Choose a sample assignment"><span>Not sure what to try?</span><button class="example-button" data-example="math" type="button"><span aria-hidden="true">∑</span> Math</button><button class="example-button" data-example="english" type="button"><span aria-hidden="true">Aa</span> English</button><button class="example-button" data-example="science" type="button"><span aria-hidden="true">✦</span> Science</button><button class="example-button" data-example="history" type="button"><span aria-hidden="true">◷</span> History</button><button class="example-button" data-example="spanish" type="button"><span aria-hidden="true">文</span> Spanish</button></div>
         <div class="input-footer"><span id="char-count">0 / 12,000</span><div class="input-actions"><button id="clear-button" class="secondary-button" type="button">Clear</button><button id="explain-button" class="primary-button" type="button"><span id="explain-label">Explain directions</span><span class="arrow">→</span></button></div></div>
