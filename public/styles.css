@@ -153,6 +153,23 @@ footer { max-width: 1240px; padding: 25px 34px 34px; }
 .comparison-steps { margin: 0; padding-left: 20px; color: var(--ink); font-size: .8rem; line-height: 1.5; }
 .comparison-steps li { padding: 2px 0; }
 @media (max-width: 620px) { .comparison-panel { grid-template-columns: 1fr; }.teacher-reminder { padding: 12px; }.teacher-reminder p, .compare-button { font-size: .72rem; } }
+
+/* Interactive vocabulary definitions. */
+.vocab-hint { margin: 13px 0 0; color: var(--teal-dark); font-size: .72rem; font-weight: 750; }
+.vocab-hint span { margin-right: 5px; color: var(--coral); }
+.vocab-word { display: inline; margin: 0; padding: 0; border: 0; border-bottom: 2px dotted #4c9a92; color: var(--teal-dark); background: transparent; font: inherit; cursor: pointer; }
+.vocab-word:hover { color: #0b4d52; border-bottom-style: solid; background: #e6f3ef; }
+.vocab-word:focus-visible { outline: 3px solid #d08b25; outline-offset: 2px; border-radius: 3px; }
+.definition-card { display: flex; align-items: flex-start; gap: 11px; margin-top: 12px; padding: 14px; border: 1px solid #b9d7d1; border-radius: 13px; background: #eef9f5; }
+.definition-card-icon { display: grid; place-items: center; flex: 0 0 auto; width: 29px; height: 29px; border-radius: 9px; color: var(--teal-dark); background: #d6eee7; font-size: 1.05rem; }
+.definition-card-copy { min-width: 0; flex: 1; }
+.definition-card-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.definition-card h3 { margin: 0; color: var(--navy); font-size: .95rem; }
+.definition-card p { margin: 4px 0 0; color: #46636a; font-size: .77rem; line-height: 1.5; }
+.definition-card .definition-context { margin-top: 8px; padding-top: 8px; border-top: 1px solid #cce2db; color: var(--teal-dark); font-weight: 700; }
+.definition-close { flex: 0 0 auto; width: 27px; height: 27px; padding: 0; border: 1px solid #b9d7d1; border-radius: 50%; color: var(--teal-dark); background: white; font-size: 1.1rem; line-height: 1; cursor: pointer; }
+.definition-close:hover, .definition-close:focus-visible { background: var(--mint); }
+@media (max-width: 620px) { .definition-card { padding: 12px; }.definition-card p { font-size: .74rem; } }
 .hero-secondary:hover { color: var(--coral); }
 .preview-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 5px 2px; color: #b9d0d8; font-size: .58rem; }
 .preview-button { border: 1px solid rgba(255,255,255,.28); border-radius: 999px; padding: 7px 10px; color: #fff; background: rgba(255,255,255,.1); font: 800 .6rem inherit; cursor: pointer; }

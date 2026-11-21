@@ -49,6 +49,12 @@ const previewStatus = document.querySelector('#preview-status');
 const teacherReminder = document.querySelector('#teacher-reminder');
 const compareButton = document.querySelector('#compare-button');
 const comparisonPanel = document.querySelector('#comparison-panel');
+const vocabHint = document.querySelector('#vocab-hint');
+const definitionCard = document.querySelector('#definition-card');
+const definitionWord = document.querySelector('#definition-word');
+const definitionText = document.querySelector('#definition-text');
+const definitionContext = document.querySelector('#definition-context');
+const definitionClose = document.querySelector('#definition-close');
 
 const EXAMPLES = {
   math: 'Solve problems 1–10 on page 76. Show your work for each problem and circle your final answers.',
@@ -56,6 +62,29 @@ const EXAMPLES = {
   science: 'Observe a plant for five days. Record one change each day and write a short conclusion about what you noticed.',
   history: 'Read the primary source about the town meeting. List two points of view and explain which evidence supports each one.',
   spanish: 'Read the short dialogue in Spanish. Circle five words you recognize and write the main idea in English.'
+};
+
+const VOCABULARY = {
+  analyze: ['Look closely at something to understand or explain it.', 'Here, look closely at the character’s choices and explain what they show.'],
+  compare: ['Look at two or more things and explain how they are alike or different.'],
+  contrast: ['Explain how two or more things are different.'],
+  summarize: ['Tell the main ideas in a shorter way.'],
+  evaluate: ['Judge how strong, useful, or successful something is using reasons.'],
+  infer: ['Use clues and what you already know to figure something out.'],
+  interpret: ['Explain what something means.'],
+  describe: ['Tell what something is like using details.'],
+  explain: ['Make an idea clear by giving details or reasons.'],
+  identify: ['Point out or name the exact thing being asked about.'],
+  justify: ['Give reasons or evidence to support your answer.'],
+  support: ['Use reasons, facts, or details to back up an idea.'],
+  evidence: ['Facts, details, or quotes that help prove an idea.'],
+  hypothesis: ['A testable idea or prediction about what might happen.'],
+  conclusion: ['The main idea you reach after looking at the information.'],
+  predict: ['Use clues to say what you think will happen next.'],
+  demonstrate: ['Show how something works or show that you understand it.'],
+  classify: ['Put things into groups based on what they have in common.'],
+  cite: ['Say where information or evidence came from.'],
+  revise: ['Change your work to make it clearer or better.']
 };
 
 let isLoading = false;
@@ -69,6 +98,41 @@ let currentAssignment = '';
 let hasSavedFocusProgress = false;
 let explanationRequestId = 0;
 let loadingMessageTimer = null;
+
+function closeDefinition() {
+  definitionCard.hidden = true;
+  definitionContext.hidden = true;
+}
+
+function showDefinition(word) {
+  const entry = VOCABULARY[word.toLowerCase()];
+  if (!entry) return;
+  definitionWord.textContent = word;
+  definitionText.textContent = entry[0];
+  const context = entry[1] || '';
+  definitionContext.textContent = context;
+  definitionContext.hidden = !context;
+  definitionCard.hidden = false;
+  definitionClose.focus();
+}
+
+function appendInteractiveText(parent, text) {
+  const parts = String(text ?? '').split(/(\b[A-Za-z][A-Za-z'-]*\b)/g);
+  parts.forEach((part) => {
+    const entry = VOCABULARY[part.toLowerCase()];
+    if (!entry || !/^[A-Za-z][A-Za-z'-]*$/.test(part)) {
+      parent.appendChild(document.createTextNode(part));
+      return;
+    }
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'vocab-word';
+    button.textContent = part;
+    button.setAttribute('aria-label', `Define ${part}`);
+    button.addEventListener('click', () => showDefinition(part));
+    parent.appendChild(button);
+  });
+}
 
 const loadingMessages = [
   'ClearStep is organizing your directions…',
@@ -119,6 +183,8 @@ function resetDisplayedResult() {
   comparisonPanel.hidden = true;
   compareButton.setAttribute('aria-expanded', 'false');
   compareButton.textContent = 'Compare with original directions';
+  vocabHint.hidden = true;
+  closeDefinition();
   focusButton.hidden = true;
   focusResume.hidden = true;
   focusContent.hidden = false;
@@ -177,7 +243,7 @@ function addResultSection(title, items, type = 'paragraph') {
       stepHeading.textContent = makeStepHeading(item);
       const stepDescription = document.createElement('span');
       stepDescription.className = 'step-description';
-      stepDescription.textContent = item;
+      appendInteractiveText(stepDescription, item);
       copy.append(stepHeading, stepDescription);
       row.append(checkbox, copy);
       row.classList.toggle('step-complete', checkbox.checked);
@@ -186,7 +252,7 @@ function addResultSection(title, items, type = 'paragraph') {
     section.appendChild(list);
   } else {
     const text = document.createElement('p');
-    text.textContent = items;
+    appendInteractiveText(text, items);
     section.appendChild(text);
   }
   resultContent.appendChild(section);
@@ -323,7 +389,8 @@ function renderFocus() {
   const index = focusProgress.index;
   focusTitle.textContent = `Step ${total ? index + 1 : 0} of ${total}`;
   focusStepHeading.textContent = currentStepHeadings[index] || '';
-  focusStep.textContent = currentSteps[index] || 'There are no steps to focus on yet.';
+  focusStep.replaceChildren();
+  appendInteractiveText(focusStep, currentSteps[index] || 'There are no steps to focus on yet.');
   focusProgressBar.style.width = `${ClearStepFocus.completedPercent(focusProgress.completed, total)}%`;
   focusProgressLabel.textContent = `${stepChecks.length} of ${total} steps completed`;
   focusOverview.replaceChildren();
@@ -383,11 +450,15 @@ function showResult(result, isError = false) {
   if (isError || typeof result === 'string') {
     resultContent.textContent = result;
     focusButton.hidden = true;
+    vocabHint.hidden = true;
+    closeDefinition();
     return;
   }
   if (isRefusal) {
     addRefusalResult(result);
     focusButton.hidden = true;
+    vocabHint.hidden = true;
+    closeDefinition();
     return;
   }
   currentSteps = Array.isArray(result.steps) ? result.steps : [];
@@ -402,6 +473,8 @@ function showResult(result, isError = false) {
   addResultSection('Things to ask your teacher', result.missingInformation, 'list');
   addRequirementChecklist(result.importantRequirements);
   renderComparison(result);
+  vocabHint.hidden = !resultContent.querySelector('.vocab-word');
+  closeDefinition();
   stepProgress.hidden = currentSteps.length === 0;
   focusButton.hidden = currentSteps.length === 0;
   updateStepProgress();
@@ -410,6 +483,7 @@ function showResult(result, isError = false) {
 compareButton.addEventListener('click', () => {
   updateComparisonVisibility(comparisonPanel.hidden);
 });
+definitionClose.addEventListener('click', closeDefinition);
 
 function resultToText(result) {
   if (typeof result === 'string') return result;
