@@ -46,6 +46,9 @@ const savedLabel = document.querySelector('#saved-label');
 const previewDemo = document.querySelector('#preview-demo');
 const previewDemoButton = document.querySelector('#preview-demo-button');
 const previewStatus = document.querySelector('#preview-status');
+const teacherReminder = document.querySelector('#teacher-reminder');
+const compareButton = document.querySelector('#compare-button');
+const comparisonPanel = document.querySelector('#comparison-panel');
 
 const EXAMPLES = {
   math: 'Solve problems 1–10 on page 76. Show your work for each problem and circle your final answers.',
@@ -112,6 +115,10 @@ function resetDisplayedResult() {
   simplerResultNote.hidden = true;
   stepProgress.hidden = true;
   focusPanel.hidden = true;
+  teacherReminder.hidden = true;
+  comparisonPanel.hidden = true;
+  compareButton.setAttribute('aria-expanded', 'false');
+  compareButton.textContent = 'Compare with original directions';
   focusButton.hidden = true;
   focusResume.hidden = true;
   focusContent.hidden = false;
@@ -254,6 +261,45 @@ function addRequirementChecklist(requirements) {
   resultContent.appendChild(section);
 }
 
+function renderComparison(result) {
+  comparisonPanel.replaceChildren();
+  if (typeof result === 'string' || !result || result.responseType === 'refusal' || !currentAssignment) return;
+  const originalColumn = document.createElement('article');
+  originalColumn.className = 'comparison-column original-column';
+  const originalHeading = document.createElement('h3');
+  originalHeading.textContent = 'Original teacher directions';
+  const originalText = document.createElement('p');
+  originalText.className = 'comparison-original';
+  originalText.textContent = currentAssignment;
+  originalColumn.append(originalHeading, originalText);
+
+  const explanationColumn = document.createElement('article');
+  explanationColumn.className = 'comparison-column';
+  const explanationHeading = document.createElement('h3');
+  explanationHeading.textContent = 'ClearStep explanation';
+  const summary = document.createElement('p');
+  summary.className = 'comparison-summary';
+  summary.textContent = result.summary || '';
+  const steps = document.createElement('ol');
+  steps.className = 'comparison-steps';
+  (Array.isArray(result.steps) ? result.steps : []).forEach((step) => {
+    const item = document.createElement('li');
+    item.textContent = step;
+    steps.appendChild(item);
+  });
+  explanationColumn.append(explanationHeading, summary);
+  if (steps.children.length) explanationColumn.appendChild(steps);
+  comparisonPanel.append(originalColumn, explanationColumn);
+}
+
+function updateComparisonVisibility(visible) {
+  const canCompare = !resultContent.hidden && !teacherReminder.hidden && typeof latestResult !== 'string' && latestResult?.responseType !== 'refusal';
+  const open = Boolean(visible) && canCompare;
+  comparisonPanel.hidden = !open;
+  compareButton.setAttribute('aria-expanded', String(open));
+  compareButton.textContent = open ? 'Hide original directions' : 'Compare with original directions';
+}
+
 function addRefusalResult(result) {
   const section = document.createElement('section');
   section.className = 'refusal-card';
@@ -314,6 +360,10 @@ function showResult(result, isError = false) {
   resultContent.hidden = false;
   resultContent.classList.toggle('error-result', isError);
   resultContent.classList.toggle('refusal-result', isRefusal);
+  teacherReminder.hidden = isError || isRefusal || typeof result === 'string';
+  comparisonPanel.hidden = true;
+  compareButton.setAttribute('aria-expanded', 'false');
+  compareButton.textContent = 'Compare with original directions';
   resultActions.hidden = isError || isRefusal;
   completionStatus.hidden = isError || isRefusal;
   simplerResultNote.hidden = isError || isRefusal || typeof result === 'string' || result === originalResult;
@@ -351,10 +401,15 @@ function showResult(result, isError = false) {
   addResultSection('Steps to follow', result.steps, 'list');
   addResultSection('Things to ask your teacher', result.missingInformation, 'list');
   addRequirementChecklist(result.importantRequirements);
+  renderComparison(result);
   stepProgress.hidden = currentSteps.length === 0;
   focusButton.hidden = currentSteps.length === 0;
   updateStepProgress();
 }
+
+compareButton.addEventListener('click', () => {
+  updateComparisonVisibility(comparisonPanel.hidden);
+});
 
 function resultToText(result) {
   if (typeof result === 'string') return result;
@@ -366,7 +421,6 @@ function resultToText(result) {
 }
 
 instructionsInput.addEventListener('input', () => {
-  resetDisplayedResult();
   exampleButtons.forEach((item) => {
     item.classList.remove('selected');
     item.setAttribute('aria-pressed', 'false');
