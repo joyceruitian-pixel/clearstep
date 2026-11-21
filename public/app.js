@@ -55,6 +55,7 @@ const definitionWord = document.querySelector('#definition-word');
 const definitionText = document.querySelector('#definition-text');
 const definitionContext = document.querySelector('#definition-context');
 const definitionClose = document.querySelector('#definition-close');
+let lastDefinitionTrigger = null;
 
 const EXAMPLES = {
   math: 'Solve problems 1–10 on page 76. Show your work for each problem and circle your final answers.',
@@ -99,14 +100,17 @@ let hasSavedFocusProgress = false;
 let explanationRequestId = 0;
 let loadingMessageTimer = null;
 
-function closeDefinition() {
+function closeDefinition({ restoreFocus = true } = {}) {
   definitionCard.hidden = true;
   definitionContext.hidden = true;
+  if (restoreFocus && lastDefinitionTrigger?.isConnected) lastDefinitionTrigger.focus();
+  lastDefinitionTrigger = null;
 }
 
-function showDefinition(word) {
+function showDefinition(word, trigger = null) {
   const entry = VOCABULARY[word.toLowerCase()];
   if (!entry) return;
+  lastDefinitionTrigger = trigger;
   definitionWord.textContent = word;
   definitionText.textContent = entry[0];
   const context = entry[1] || '';
@@ -129,7 +133,7 @@ function appendInteractiveText(parent, text) {
     button.className = 'vocab-word';
     button.textContent = part;
     button.setAttribute('aria-label', `Define ${part}`);
-    button.addEventListener('click', () => showDefinition(part));
+    button.addEventListener('click', () => showDefinition(part, button));
     parent.appendChild(button);
   });
 }
@@ -184,7 +188,7 @@ function resetDisplayedResult() {
   compareButton.setAttribute('aria-expanded', 'false');
   compareButton.textContent = 'Compare with original directions';
   vocabHint.hidden = true;
-  closeDefinition();
+  closeDefinition({ restoreFocus: false });
   focusButton.hidden = true;
   focusResume.hidden = true;
   focusContent.hidden = false;
@@ -451,14 +455,14 @@ function showResult(result, isError = false) {
     resultContent.textContent = result;
     focusButton.hidden = true;
     vocabHint.hidden = true;
-    closeDefinition();
+    closeDefinition({ restoreFocus: false });
     return;
   }
   if (isRefusal) {
     addRefusalResult(result);
     focusButton.hidden = true;
     vocabHint.hidden = true;
-    closeDefinition();
+    closeDefinition({ restoreFocus: false });
     return;
   }
   currentSteps = Array.isArray(result.steps) ? result.steps : [];
@@ -474,7 +478,7 @@ function showResult(result, isError = false) {
   addRequirementChecklist(result.importantRequirements);
   renderComparison(result);
   vocabHint.hidden = !resultContent.querySelector('.vocab-word');
-  closeDefinition();
+  closeDefinition({ restoreFocus: false });
   stepProgress.hidden = currentSteps.length === 0;
   focusButton.hidden = currentSteps.length === 0;
   updateStepProgress();
@@ -484,6 +488,9 @@ compareButton.addEventListener('click', () => {
   updateComparisonVisibility(comparisonPanel.hidden);
 });
 definitionClose.addEventListener('click', closeDefinition);
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') closeDefinition();
+});
 
 function resultToText(result) {
   if (typeof result === 'string') return result;
