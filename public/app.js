@@ -254,6 +254,23 @@ function addRequirementChecklist(requirements) {
   resultContent.appendChild(section);
 }
 
+function addRefusalResult(result) {
+  const section = document.createElement('section');
+  section.className = 'refusal-card';
+  const label = document.createElement('span');
+  label.className = 'refusal-label';
+  label.textContent = 'Directions, not answers';
+  const heading = document.createElement('h3');
+  heading.textContent = 'I can help you understand the assignment.';
+  const summary = document.createElement('p');
+  summary.textContent = result.summary;
+  const suggestion = document.createElement('p');
+  suggestion.className = 'refusal-suggestion';
+  suggestion.textContent = result.suggestion || 'Paste the assignment directions, and I can explain them or break them into smaller steps.';
+  section.append(label, heading, summary, suggestion);
+  resultContent.appendChild(section);
+}
+
 function renderFocus() {
   const total = currentSteps.length;
   focusProgress = ClearStepFocus.normalizeProgress(focusProgress, total);
@@ -291,21 +308,23 @@ function renderFocus() {
 }
 
 function showResult(result, isError = false) {
+  const isRefusal = !isError && typeof result !== 'string' && result?.responseType === 'refusal';
   resultEmpty.hidden = true;
   resultLoading.hidden = true;
   resultContent.hidden = false;
   resultContent.classList.toggle('error-result', isError);
-  resultActions.hidden = isError;
-  completionStatus.hidden = isError;
-  simplerResultNote.hidden = isError || typeof result === 'string' || result === originalResult;
-  stepProgress.hidden = isError || typeof result === 'string';
+  resultContent.classList.toggle('refusal-result', isRefusal);
+  resultActions.hidden = isError || isRefusal;
+  completionStatus.hidden = isError || isRefusal;
+  simplerResultNote.hidden = isError || isRefusal || typeof result === 'string' || result === originalResult;
+  stepProgress.hidden = isError || isRefusal || typeof result === 'string';
   focusPanel.hidden = true;
   focusResume.hidden = true;
   focusContent.hidden = false;
   copyStatus.textContent = '';
   simplifyStatus.textContent = '';
-  simplifyButton.hidden = isError || typeof result === 'string' || result !== originalResult;
-  restoreButton.hidden = isError || typeof result === 'string' || result === originalResult;
+  simplifyButton.hidden = isError || isRefusal || typeof result === 'string' || result !== originalResult;
+  restoreButton.hidden = isError || isRefusal || typeof result === 'string' || result === originalResult;
   resultContent.replaceChildren();
   currentSteps = [];
   currentStepHeadings = [];
@@ -313,6 +332,11 @@ function showResult(result, isError = false) {
   stepProgress.hidden = true;
   if (isError || typeof result === 'string') {
     resultContent.textContent = result;
+    focusButton.hidden = true;
+    return;
+  }
+  if (isRefusal) {
+    addRefusalResult(result);
     focusButton.hidden = true;
     return;
   }
@@ -334,6 +358,7 @@ function showResult(result, isError = false) {
 
 function resultToText(result) {
   if (typeof result === 'string') return result;
+  if (result.responseType === 'refusal') return `${result.summary}\n\n${result.suggestion}`;
   const lines = [`What your assignment means: ${result.summary}`, '', 'Steps to follow:', ...result.steps.map((step, index) => `${index + 1}. ${step}`)];
   if (result.importantRequirements.length) lines.push('', 'Important requirements:', ...result.importantRequirements.map((item) => `- ${item}`));
   if (result.missingInformation.length) lines.push('', 'Things to ask your teacher:', ...result.missingInformation.map((item) => `- ${item}`));
@@ -454,8 +479,12 @@ explainButton.addEventListener('click', async () => {
     originalResult = data.result;
     currentAssignment = instructions;
     showResult(data.result);
-    saveExplanation({ instructions, result: data.result, savedAt: new Date().toISOString() });
-    savedLabel.textContent = 'Saved on this device';
+    if (data.result.responseType !== 'refusal') {
+      saveExplanation({ instructions, result: data.result, savedAt: new Date().toISOString() });
+      savedLabel.textContent = 'Saved on this device';
+    } else {
+      savedLabel.textContent = 'Not saved';
+    }
   } catch (error) {
     if (requestId !== explanationRequestId) return;
     showResult(`I couldn't explain that right now. ${error.message} Please compare with your teacher's original directions.`, true);

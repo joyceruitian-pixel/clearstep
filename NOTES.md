@@ -118,6 +118,14 @@ Then open http://localhost:3000 in your browser.
 - The final run and all actual responses are documented honestly in `MVP_GOAL_4_TEST_RESULTS.md`.
 - Live website checks confirmed normal explanations, Explain more simply, exact requirements, numbered steps, checkboxes, progress, and safe redirects still work.
 
+## Other Task 1 — homework completion refusal
+
+- ClearStep now returns a structured refusal when a student clearly asks the AI to do their homework or provide answers.
+- The refusal is short and friendly and offers to explain the directions or break them into steps instead.
+- Refusals use a separate result card and do not show fake steps, success text, progress, checkboxes, Focus Mode, or completed-work saving.
+- Ordinary directions such as “Write a paragraph” and “Solve problems 1–10” still receive explanations instead of false refusals.
+- The final real API test run passed all 12 required cases; exact results are in `OTHER_TASK_1_TEST_RESULTS.md`.
+
 ## Interactive website transformation
 
 - The hero now includes a clearly labeled, replayable “Before → After” sample that uses local HTML/CSS only and never pretends to be a live AI response.

@@ -24,6 +24,12 @@ body::before { content: ""; position: fixed; inset: 0; pointer-events: none; opa
 .input-actions { display: flex; align-items: center; gap: 8px; }.secondary-button { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; color: var(--teal-dark); background: white; font: 800 .8rem inherit; cursor: pointer; }.secondary-button:hover, .secondary-button:focus-visible { background: var(--mint); border-color: #b9d7d1; }.primary-button { min-width: 132px; box-shadow: 0 6px 12px rgba(23,107,112,.16); }
 .result-content { max-width: 690px; }
 .result-content.error-result { border-left-color: #d68a55; color: #7b4938; background: #fff9f4; padding: 14px 18px; border-radius: 10px; }
+.result-content.refusal-result { border-left: 0; padding: 0; }
+.refusal-card { padding: 22px; border: 1px solid #d6d3ef; border-radius: 14px; background: #f7f5ff; }
+.refusal-label { display: inline-block; margin-bottom: 8px; color: #665fb0; font-size: .66rem; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
+.refusal-card h3 { margin: 0 0 10px; color: var(--navy); font-size: 1.08rem; }
+.refusal-card p { margin: 0; color: var(--ink); line-height: 1.55; }
+.refusal-card .refusal-suggestion { margin-top: 12px; padding-top: 12px; border-top: 1px solid #ddd9f1; color: var(--teal-dark); font-weight: 700; }
 .answer-section + .answer-section { border-top: 1px solid var(--line); margin-top: 18px; padding-top: 16px; }
 .answer-section h3 { margin: 0 0 7px; color: var(--teal-dark); font-size: .78rem; letter-spacing: .02em; text-transform: uppercase; }
 .answer-section p, .answer-section ol { margin: 0; }.answer-section p { line-height: 1.6; }.answer-section ol { padding-left: 23px; }.answer-section li { padding: 3px 0 3px 4px; line-height: 1.5; }.answer-section li::marker { color: var(--teal); font-weight: 800; }
