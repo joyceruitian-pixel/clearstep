@@ -157,6 +157,11 @@ footer { max-width: 1240px; padding: 25px 34px 34px; }
 /* Interactive vocabulary definitions. */
 .vocab-hint { margin: 13px 0 0; color: var(--teal-dark); font-size: .72rem; font-weight: 750; }
 .vocab-hint span { margin-right: 5px; color: var(--coral); }
+.vocabulary-help { margin-top: 14px; padding: 12px 13px; border: 1px solid #d7e8e1; border-radius: 12px; background: #f8fcfa; }
+.vocabulary-help h3 { margin: 0 0 9px; color: var(--teal-dark); font-size: .7rem; letter-spacing: .05em; text-transform: uppercase; }
+.vocabulary-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.vocab-chip { max-width: 100%; border: 1px solid #afd3c9; border-radius: 999px; padding: 6px 9px; color: var(--teal-dark); background: white; font: 700 .72rem inherit; cursor: pointer; overflow-wrap: anywhere; }
+.vocab-chip:hover, .vocab-chip:focus-visible { border-color: var(--teal); background: var(--mint); }
 .vocab-word { display: inline; margin: 0; padding: 0; border: 0; border-bottom: 2px dotted #4c9a92; color: var(--teal-dark); background: transparent; font: inherit; cursor: pointer; }
 .vocab-word:hover { color: #0b4d52; border-bottom-style: solid; background: #e6f3ef; }
 .vocab-word:focus-visible { outline: 3px solid #d08b25; outline-offset: 2px; border-radius: 3px; }
@@ -169,7 +174,7 @@ footer { max-width: 1240px; padding: 25px 34px 34px; }
 .definition-card .definition-context { margin-top: 8px; padding-top: 8px; border-top: 1px solid #cce2db; color: var(--teal-dark); font-weight: 700; }
 .definition-close { flex: 0 0 auto; width: 27px; height: 27px; padding: 0; border: 1px solid #b9d7d1; border-radius: 50%; color: var(--teal-dark); background: white; font-size: 1.1rem; line-height: 1; cursor: pointer; }
 .definition-close:hover, .definition-close:focus-visible { background: var(--mint); }
-@media (max-width: 620px) { .definition-card { padding: 12px; }.definition-card p { font-size: .74rem; } }
+@media (max-width: 620px) { .definition-card { padding: 12px; }.definition-card p { font-size: .74rem; }.vocabulary-help { padding: 11px; }.vocab-chip { font-size: .7rem; } }
 .hero-secondary:hover { color: var(--coral); }
 .preview-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 5px 2px; color: #b9d0d8; font-size: .58rem; }
 .preview-button { border: 1px solid rgba(255,255,255,.28); border-radius: 999px; padding: 7px 10px; color: #fff; background: rgba(255,255,255,.1); font: 800 .6rem inherit; cursor: pointer; }

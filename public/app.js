@@ -50,6 +50,8 @@ const teacherReminder = document.querySelector('#teacher-reminder');
 const compareButton = document.querySelector('#compare-button');
 const comparisonPanel = document.querySelector('#comparison-panel');
 const vocabHint = document.querySelector('#vocab-hint');
+const vocabularyHelp = document.querySelector('#vocabulary-help');
+const vocabularyChips = document.querySelector('#vocabulary-chips');
 const definitionCard = document.querySelector('#definition-card');
 const definitionWord = document.querySelector('#definition-word');
 const definitionText = document.querySelector('#definition-text');
@@ -73,20 +75,58 @@ const VOCABULARY = {
   evaluate: ['Judge how strong, useful, or successful something is using reasons.'],
   infer: ['Use clues and what you already know to figure something out.'],
   interpret: ['Explain what something means.'],
-  describe: ['Tell what something is like using details.'],
-  explain: ['Make an idea clear by giving details or reasons.'],
-  identify: ['Point out or name the exact thing being asked about.'],
   justify: ['Give reasons or evidence to support your answer.'],
-  support: ['Use reasons, facts, or details to back up an idea.'],
-  evidence: ['Facts, details, or quotes that help prove an idea.'],
+  cite: ['Say where information or evidence came from.'],
+  evidence: ['Facts, details, or quotes that help prove an idea.', 'Here, use a quote or detail from the story to support your thinking.'],
   hypothesis: ['A testable idea or prediction about what might happen.'],
   conclusion: ['The main idea you reach after looking at the information.'],
   predict: ['Use clues to say what you think will happen next.'],
   demonstrate: ['Show how something works or show that you understand it.'],
   classify: ['Put things into groups based on what they have in common.'],
-  cite: ['Say where information or evidence came from.'],
-  revise: ['Change your work to make it clearer or better.']
+  describe: ['Tell what something is like using details.'],
+  explain: ['Make an idea clear by giving details or reasons.'],
+  identify: ['Point out or name the exact thing being asked about.'],
+  support: ['Use reasons, facts, or details to back up an idea.'],
+  revise: ['Change your work to make it clearer or better.'],
+  observation: ['Something you notice by watching or measuring carefully.'],
+  variable: ['A factor that can change in an experiment or problem.'],
+  calculate: ['Work out an answer using math.'],
+  estimate: ['Make a close guess using the information you have.'],
+  simplify: ['Rewrite something in an easier or shorter form.'],
+  equivalent: ['Equal in value or meaning, even if it looks different.'],
+  equation: ['A math sentence that says two amounts are equal.'],
+  expression: ['A math phrase made with numbers, variables, and operations.'],
+  coefficient: ['A number multiplied by a variable, such as the 3 in 3x.'],
+  proportion: ['An equation showing that two ratios are equal.'],
+  ratio: ['A comparison of two amounts.'],
+  mean: ['The math average: add the numbers and divide by how many numbers there are.'],
+  median: ['The middle number when a group of numbers is put in order.'],
+  mode: ['The number or item that appears most often.'],
+  theme: ['A big idea or message in a story or text.'],
+  motivation: ['The reason a person or character does something.'],
+  characterization: ['The way a writer shows what a character is like.'],
+  perspective: ['The way a person sees or understands something.'],
+  context: ['The background information that helps something make sense.'],
+  argument: ['A claim supported by reasons and evidence.'],
+  claim: ['An idea or statement that someone says is true.'],
+  reasoning: ['The thinking that connects evidence to a claim.'],
+  source: ['A place where information comes from.'],
+  'primary source': ['An original record or object from the time being studied.'],
+  'secondary source': ['A source that explains or analyzes information from other sources.'],
+  chronological: ['Arranged in the order that events happened.'],
+  'cause and effect': ['The relationship between an event and what it makes happen.'],
+  significance: ['Why something is important or meaningful.'],
+  annotate: ['Add notes or markings that explain important parts of a text.'],
+  paraphrase: ['Restate information in your own words.'],
+  synthesize: ['Combine ideas from different sources to make a new understanding.'],
+  elaborate: ['Add more details or explanation.'],
+  interpretive: ['Focused on explaining meaning or ideas.'],
+  quantitative: ['Described using numbers or amounts.'],
+  qualitative: ['Described using qualities or observations instead of numbers.']
 };
+
+const VOCABULARY_KEYS = Object.keys(VOCABULARY).filter((key, index, keys) => keys.indexOf(key) === index).sort((a, b) => b.length - a.length);
+const VOCABULARY_PATTERN = new RegExp(`\\b(${VOCABULARY_KEYS.map((key) => key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})\\b`, 'gi');
 
 let isLoading = false;
 let latestResult = null;
@@ -121,10 +161,10 @@ function showDefinition(word, trigger = null) {
 }
 
 function appendInteractiveText(parent, text) {
-  const parts = String(text ?? '').split(/(\b[A-Za-z][A-Za-z'-]*\b)/g);
+  const parts = String(text ?? '').split(VOCABULARY_PATTERN);
   parts.forEach((part) => {
     const entry = VOCABULARY[part.toLowerCase()];
-    if (!entry || !/^[A-Za-z][A-Za-z'-]*$/.test(part)) {
+    if (!entry) {
       parent.appendChild(document.createTextNode(part));
       return;
     }
@@ -136,6 +176,35 @@ function appendInteractiveText(parent, text) {
     button.addEventListener('click', () => showDefinition(part, button));
     parent.appendChild(button);
   });
+}
+
+function findVocabularyWords(text) {
+  const matches = [];
+  const seen = new Set();
+  String(text ?? '').match(VOCABULARY_PATTERN)?.forEach((match) => {
+    const key = match.toLowerCase();
+    if (!seen.has(key)) {
+      seen.add(key);
+      matches.push(match);
+    }
+  });
+  return matches;
+}
+
+function renderVocabularyHelp() {
+  if (!vocabularyHelp || !vocabularyChips) return;
+  vocabularyChips.replaceChildren();
+  const matches = findVocabularyWords(currentAssignment).slice(0, 8);
+  matches.forEach((word) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'vocab-chip';
+    button.textContent = word;
+    button.setAttribute('aria-label', `Define ${word}`);
+    button.addEventListener('click', () => showDefinition(word, button));
+    vocabularyChips.appendChild(button);
+  });
+  vocabularyHelp.hidden = matches.length === 0;
 }
 
 const loadingMessages = [
@@ -188,6 +257,8 @@ function resetDisplayedResult() {
   compareButton.setAttribute('aria-expanded', 'false');
   compareButton.textContent = 'Compare with original directions';
   vocabHint.hidden = true;
+  vocabularyHelp.hidden = true;
+  vocabularyChips.replaceChildren();
   closeDefinition({ restoreFocus: false });
   focusButton.hidden = true;
   focusResume.hidden = true;
@@ -340,7 +411,7 @@ function renderComparison(result) {
   originalHeading.textContent = 'Original teacher directions';
   const originalText = document.createElement('p');
   originalText.className = 'comparison-original';
-  originalText.textContent = currentAssignment;
+  appendInteractiveText(originalText, currentAssignment);
   originalColumn.append(originalHeading, originalText);
 
   const explanationColumn = document.createElement('article');
@@ -349,12 +420,12 @@ function renderComparison(result) {
   explanationHeading.textContent = 'ClearStep explanation';
   const summary = document.createElement('p');
   summary.className = 'comparison-summary';
-  summary.textContent = result.summary || '';
+  appendInteractiveText(summary, result.summary || '');
   const steps = document.createElement('ol');
   steps.className = 'comparison-steps';
   (Array.isArray(result.steps) ? result.steps : []).forEach((step) => {
     const item = document.createElement('li');
-    item.textContent = step;
+    appendInteractiveText(item, step);
     steps.appendChild(item);
   });
   explanationColumn.append(explanationHeading, summary);
@@ -455,6 +526,8 @@ function showResult(result, isError = false) {
     resultContent.textContent = result;
     focusButton.hidden = true;
     vocabHint.hidden = true;
+    vocabularyHelp.hidden = true;
+    vocabularyChips.replaceChildren();
     closeDefinition({ restoreFocus: false });
     return;
   }
@@ -462,6 +535,8 @@ function showResult(result, isError = false) {
     addRefusalResult(result);
     focusButton.hidden = true;
     vocabHint.hidden = true;
+    vocabularyHelp.hidden = true;
+    vocabularyChips.replaceChildren();
     closeDefinition({ restoreFocus: false });
     return;
   }
@@ -478,6 +553,7 @@ function showResult(result, isError = false) {
   addRequirementChecklist(result.importantRequirements);
   renderComparison(result);
   vocabHint.hidden = !resultContent.querySelector('.vocab-word');
+  renderVocabularyHelp();
   closeDefinition({ restoreFocus: false });
   stepProgress.hidden = currentSteps.length === 0;
   focusButton.hidden = currentSteps.length === 0;
