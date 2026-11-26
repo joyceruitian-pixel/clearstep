@@ -1,4 +1,4 @@
-import { loadFocusProgress, loadGradeLevel, loadRequirementChecks, loadSavedExplanations, loadStepChecks, saveExplanation, saveFocusProgress, saveGradeLevel, saveRequirementChecks, saveStepChecks } from './storage.js';
+import { loadFocusProgress, loadGradeLevel, loadRequirementChecks, loadSavedExplanations, loadStepChecks, loadSubmissionChecks, saveExplanation, saveFocusProgress, saveGradeLevel, saveRequirementChecks, saveStepChecks, saveSubmissionChecks } from './storage.js';
 
 const instructionsInput = document.querySelector('#instructions');
 const explainButton = document.querySelector('#explain-button');
@@ -14,6 +14,14 @@ const simplerResultNote = document.querySelector('#simpler-result-note');
 const gradeLevelStatus = document.querySelector('#grade-level-status');
 const gradeLevelLabel = document.querySelector('#grade-level-label');
 const gradeUpdateButton = document.querySelector('#grade-update-button');
+const submissionChecklist = document.querySelector('#submission-checklist');
+const submissionItems = document.querySelector('#submission-items');
+const submissionProgressLabel = document.querySelector('#submission-progress-label');
+const submissionProgressBar = document.querySelector('.submission-progress-bar');
+const submissionProgressFill = document.querySelector('#submission-progress-fill');
+const submissionInformation = document.querySelector('#submission-information');
+const submissionCompleteMessage = document.querySelector('#submission-complete-message');
+const focusChecklistButton = document.querySelector('#focus-checklist-button');
 const stepProgress = document.querySelector('#step-progress');
 const stepProgressLabel = document.querySelector('#step-progress-label');
 const stepProgressPercent = document.querySelector('#step-progress-percent');
@@ -144,6 +152,8 @@ let hasSavedFocusProgress = false;
 let explanationRequestId = 0;
 let loadingMessageTimer = null;
 let generatedGradeLevel = 'simple';
+let submissionChecklistItems = [];
+let submissionChecks = [];
 
 const VALID_GRADE_LEVELS = new Set(['simple', 'grade-5', 'grade-6', 'grade-7', 'grade-8', 'grade-9', 'grade-10', 'grade-11', 'grade-12']);
 function getGradeLevel() {
@@ -165,6 +175,91 @@ function updateGradeLevelStatus() {
   gradeUpdateButton.hidden = !needsUpdate;
   gradeUpdateButton.disabled = isLoading;
   gradeLevelStatus.classList.toggle('needs-update', needsUpdate);
+}
+
+function normalizedSubmissionData(result) {
+  if (!result || typeof result === 'string' || result.responseType === 'refusal') return { items: [], info: { deadline: '', method: '' }, unclear: [] };
+  const deliverables = Array.isArray(result.deliverables) ? result.deliverables.filter((item) => typeof item === 'string') : [];
+  const requiredDetails = Array.isArray(result.requiredDetails) ? result.requiredDetails.filter((item) => typeof item === 'string') : [];
+  const importantRequirements = Array.isArray(result.importantRequirements) ? result.importantRequirements.filter((item) => typeof item === 'string') : [];
+  const items = [];
+  const seen = new Set();
+  [...deliverables, ...requiredDetails, ...importantRequirements].forEach((item) => {
+    const clean = item.trim();
+    const key = clean.replace(/^(write|submit|complete|create|include|explain)\s+/i, '').replace(/^(a|an|the)\s+/i, '').replace(/[.!?]+$/, '').trim().toLowerCase();
+    if (clean && !seen.has(key)) { seen.add(key); items.push(clean); }
+  });
+  const info = result.submissionInfo && typeof result.submissionInfo === 'object' ? result.submissionInfo : {};
+  const unclear = Array.isArray(result.missingInformation) ? result.missingInformation : [];
+  return { items, info: { deadline: typeof info.deadline === 'string' ? info.deadline : '', method: typeof info.method === 'string' ? info.method : '' }, unclear };
+}
+
+function updateSubmissionProgress() {
+  const total = submissionChecklistItems.length;
+  submissionChecks = submissionChecks.filter((index) => index >= 0 && index < total);
+  const ready = submissionChecks.length;
+  const percent = total ? Math.round((ready / total) * 100) : 0;
+  submissionProgressLabel.textContent = `${ready} of ${total} ready`;
+  submissionProgressBar.setAttribute('aria-valuenow', String(percent));
+  submissionProgressFill.style.width = `${percent}%`;
+  submissionCompleteMessage.hidden = total === 0 || ready !== total;
+  if (currentAssignment && total) saveSubmissionChecks(submissionChecklistItems, currentAssignment, submissionChecks);
+}
+
+function renderSubmissionChecklist(result) {
+  const data = normalizedSubmissionData(result);
+  submissionChecklistItems = data.items;
+  submissionChecks = loadSubmissionChecks(submissionChecklistItems, currentAssignment);
+  submissionItems.replaceChildren();
+  submissionInformation.replaceChildren();
+  const hasInfo = Boolean(data.info.deadline || data.info.method);
+  const hasUnclear = !submissionChecklistItems.length && data.unclear.length > 0;
+  submissionChecklist.hidden = !submissionChecklistItems.length && !hasInfo && !hasUnclear;
+  focusChecklistButton.hidden = submissionChecklist.hidden;
+  submissionInformation.hidden = !hasInfo;
+  if (data.info.deadline) {
+    const deadline = document.createElement('div');
+    const deadlineLabel = document.createElement('strong');
+    deadlineLabel.textContent = 'Due: ';
+    deadline.appendChild(deadlineLabel);
+    appendInteractiveText(deadline, data.info.deadline);
+    submissionInformation.appendChild(deadline);
+  }
+  if (data.info.method) {
+    const method = document.createElement('div');
+    const methodLabel = document.createElement('strong');
+    methodLabel.textContent = 'Submit: ';
+    method.appendChild(methodLabel);
+    appendInteractiveText(method, data.info.method);
+    submissionInformation.appendChild(method);
+  }
+  if (hasUnclear) {
+    const message = document.createElement('div');
+    message.textContent = data.unclear[0] || 'No specific item to turn in was mentioned. Check your teacher’s directions if you’re unsure.';
+    submissionInformation.appendChild(message);
+    submissionInformation.hidden = false;
+  }
+  submissionChecklistItems.forEach((item, index) => {
+    const row = document.createElement('li');
+    row.className = 'submission-item';
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = submissionChecks.includes(index);
+    checkbox.setAttribute('aria-label', `Mark submission item ${index + 1} ready`);
+    const copy = document.createElement('span');
+    copy.className = 'submission-item-copy';
+    appendInteractiveText(copy, item);
+    row.classList.toggle('is-ready', checkbox.checked);
+    checkbox.addEventListener('change', () => {
+      if (checkbox.checked) submissionChecks = [...new Set([...submissionChecks, index])];
+      else submissionChecks = submissionChecks.filter((checkedIndex) => checkedIndex !== index);
+      row.classList.toggle('is-ready', checkbox.checked);
+      updateSubmissionProgress();
+    });
+    row.append(checkbox, copy);
+    submissionItems.appendChild(row);
+  });
+  updateSubmissionProgress();
 }
 
 function closeDefinition({ restoreFocus = true } = {}) {
@@ -265,6 +360,8 @@ function resetDisplayedResult() {
   latestResult = null;
   originalResult = null;
   currentAssignment = '';
+  submissionChecklistItems = [];
+  submissionChecks = [];
   currentSteps = [];
   currentStepHeadings = [];
   stepChecks = [];
@@ -279,6 +376,10 @@ function resetDisplayedResult() {
   simplerResultNote.hidden = true;
   gradeLevelStatus.hidden = true;
   gradeUpdateButton.hidden = true;
+  submissionChecklist.hidden = true;
+  focusChecklistButton.hidden = true;
+  submissionItems.replaceChildren();
+  submissionInformation.replaceChildren();
   stepProgress.hidden = true;
   focusPanel.hidden = true;
   teacherReminder.hidden = true;
@@ -489,6 +590,7 @@ function addRefusalResult(result) {
 
 function renderFocus() {
   const total = currentSteps.length;
+  focusChecklistButton.hidden = submissionChecklist.hidden;
   focusProgress = ClearStepFocus.normalizeProgress(focusProgress, total);
   const index = focusProgress.index;
   focusTitle.textContent = `Step ${total ? index + 1 : 0} of ${total}`;
@@ -559,6 +661,8 @@ function showResult(result, isError = false) {
     vocabularyChips.replaceChildren();
     closeDefinition({ restoreFocus: false });
     gradeLevelStatus.hidden = true;
+    submissionChecklist.hidden = true;
+    focusChecklistButton.hidden = true;
     return;
   }
   if (isRefusal) {
@@ -569,6 +673,8 @@ function showResult(result, isError = false) {
     vocabularyChips.replaceChildren();
     closeDefinition({ restoreFocus: false });
     gradeLevelStatus.hidden = true;
+    submissionChecklist.hidden = true;
+    focusChecklistButton.hidden = true;
     return;
   }
   currentSteps = Array.isArray(result.steps) ? result.steps : [];
@@ -583,6 +689,7 @@ function showResult(result, isError = false) {
   addResultSection('Things to ask your teacher', result.missingInformation, 'list');
   addRequirementChecklist(result.importantRequirements);
   renderComparison(result);
+  renderSubmissionChecklist(result);
   vocabHint.hidden = !resultContent.querySelector('.vocab-word');
   renderVocabularyHelp();
   closeDefinition({ restoreFocus: false });
@@ -606,6 +713,10 @@ function resultToText(result) {
   const lines = [`What your assignment means: ${result.summary}`, '', 'Steps to follow:', ...result.steps.map((step, index) => `${index + 1}. ${step}`)];
   if (result.importantRequirements.length) lines.push('', 'Important requirements:', ...result.importantRequirements.map((item) => `- ${item}`));
   if (result.missingInformation.length) lines.push('', 'Things to ask your teacher:', ...result.missingInformation.map((item) => `- ${item}`));
+  const checklist = normalizedSubmissionData(result);
+  if (checklist.items.length) lines.push('', 'What to turn in:', ...checklist.items.map((item) => `- ${item}`));
+  if (checklist.info.deadline) lines.push(`Due: ${checklist.info.deadline}`);
+  if (checklist.info.method) lines.push(`Submit: ${checklist.info.method}`);
   return lines.join('\n');
 }
 
@@ -652,6 +763,10 @@ focusClose.addEventListener('click', () => {
   focusPanel.hidden = true;
   resultContent.hidden = false;
   resultActions.hidden = false;
+});
+focusChecklistButton.addEventListener('click', () => {
+  focusClose.click();
+  submissionChecklist.scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 focusPrevious.addEventListener('click', () => { focusProgress.index = ClearStepFocus.previousIndex(focusProgress.index, currentSteps.length); saveFocusProgress(currentSteps, currentAssignment, focusProgress); hasSavedFocusProgress = true; renderFocus(); });
 focusNext.addEventListener('click', () => {

@@ -3,6 +3,7 @@ const FOCUS_KEY = 'clearstep-focus-progress';
 const REQUIREMENTS_KEY = 'clearstep-requirement-checks';
 const STEPS_KEY = 'clearstep-step-checks';
 const GRADE_LEVEL_KEY = 'clearstep-grade-level';
+const SUBMISSION_KEY = 'clearstep-submission-checks';
 
 const SAMPLE_ITEMS = [
   { instructions: 'Read pages 42–48 and write three details about how the main character changes.', result: 'Practice example: Read the assigned pages, notice changes in the character, and write three details. Ask your teacher if a page number or format is unclear.', sample: true },
@@ -73,4 +74,18 @@ export function loadGradeLevel() {
 
 export function saveGradeLevel(level) {
   localStorage.setItem(GRADE_LEVEL_KEY, level);
+}
+
+function submissionSignature(items, assignmentKey) { return `${assignmentKey}\u0000${items.join('|')}`; }
+
+export function loadSubmissionChecks(items, assignmentKey) {
+  try {
+    const saved = JSON.parse(localStorage.getItem(SUBMISSION_KEY));
+    if (saved?.signature === submissionSignature(items, assignmentKey)) return saved.checked || [];
+  } catch {}
+  return [];
+}
+
+export function saveSubmissionChecks(items, assignmentKey, checked) {
+  localStorage.setItem(SUBMISSION_KEY, JSON.stringify({ signature: submissionSignature(items, assignmentKey), checked }));
 }
