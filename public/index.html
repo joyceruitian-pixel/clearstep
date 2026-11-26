@@ -56,6 +56,22 @@
             </details>
           </div>
         </aside>
+        <fieldset class="grade-picker" aria-describedby="grade-picker-help">
+          <legend><span aria-hidden="true">🎓</span> Make it your level</legend>
+          <p id="grade-picker-help">Choose the explanation level that helps you most. It can be different from your actual grade.</p>
+          <label for="grade-level" class="sr-only">Explanation level</label>
+          <select id="grade-level" name="gradeLevel">
+            <option value="simple">Simple language (recommended)</option>
+            <option value="grade-5">5th grade</option>
+            <option value="grade-6">6th grade</option>
+            <option value="grade-7">7th grade</option>
+            <option value="grade-8">8th grade</option>
+            <option value="grade-9">9th grade</option>
+            <option value="grade-10">10th grade</option>
+            <option value="grade-11">11th grade</option>
+            <option value="grade-12">12th grade</option>
+          </select>
+        </fieldset>
         <textarea id="instructions" maxlength="12000" placeholder="Example: Read pages 42–48. In your notebook, write three details that show how the main character changes. Use a quote for each detail."></textarea>
         <div class="example-picker" aria-label="Choose a sample assignment"><span>Not sure what to try?</span><button class="example-button" data-example="math" type="button"><span aria-hidden="true">∑</span> Math</button><button class="example-button" data-example="english" type="button"><span aria-hidden="true">Aa</span> English</button><button class="example-button" data-example="science" type="button"><span aria-hidden="true">✦</span> Science</button><button class="example-button" data-example="history" type="button"><span aria-hidden="true">◷</span> History</button><button class="example-button" data-example="spanish" type="button"><span aria-hidden="true">文</span> Spanish</button></div>
         <div class="input-footer"><span id="char-count">0 / 12,000</span><div class="input-actions"><button id="clear-button" class="secondary-button" type="button">Clear</button><button id="explain-button" class="primary-button" type="button"><span id="explain-label">Explain directions</span><span class="arrow">→</span></button></div></div>
@@ -68,6 +84,7 @@
         <div class="card-heading"><div><span class="step-number pale">2</span><h2>See your clear steps</h2></div><span id="saved-label" class="saved-label">Your device only</span></div>
         <p id="completion-status" class="completion-status" role="status" hidden>Done — your clear steps are ready.</p>
         <p id="simpler-result-note" class="simpler-result-note" role="status" hidden>Even simpler version · Same assignment, easier words.</p>
+        <div id="grade-level-status" class="grade-level-status" role="status" hidden><span id="grade-level-label"></span><button id="grade-update-button" class="secondary-button" type="button">Update explanation</button></div>
         <div id="result-empty" class="result-empty"><div class="empty-visual" aria-hidden="true"><span>?</span><i>→</i><b>✓</b></div><p>Your clear steps will show up here.</p><span>Paste your directions and we’ll help you figure out what to do next.</span></div>
         <div id="result-loading" class="result-loading" role="status" aria-live="polite" hidden><div class="loading-orbit" aria-hidden="true"><i></i><i></i><i></i></div><p id="loading-message">ClearStep is organizing your directions…</p><span id="loading-note">Illustrative progress while your explanation loads.</span></div>
         <section id="step-progress" class="step-progress" aria-label="Homework step progress" hidden><div class="step-progress-header"><div><span class="progress-kicker">Your progress</span><strong id="step-progress-label">0 of 0 steps completed</strong></div><span id="step-progress-percent">0%</span></div><div id="step-progress-bar" class="step-progress-bar" role="progressbar" aria-label="Homework steps completed" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><p id="step-progress-message" class="step-progress-message" role="status" hidden>All steps checked. Nice work!</p></section>

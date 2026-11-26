@@ -2,6 +2,7 @@ const STORAGE_KEY = 'clearstep-saved-explanations';
 const FOCUS_KEY = 'clearstep-focus-progress';
 const REQUIREMENTS_KEY = 'clearstep-requirement-checks';
 const STEPS_KEY = 'clearstep-step-checks';
+const GRADE_LEVEL_KEY = 'clearstep-grade-level';
 
 const SAMPLE_ITEMS = [
   { instructions: 'Read pages 42–48 and write three details about how the main character changes.', result: 'Practice example: Read the assigned pages, notice changes in the character, and write three details. Ask your teacher if a page number or format is unclear.', sample: true },
@@ -59,4 +60,17 @@ export function loadStepChecks(steps, assignmentKey) {
 
 export function saveStepChecks(steps, assignmentKey, checked) {
   localStorage.setItem(STEPS_KEY, JSON.stringify({ signature: focusSignature(steps, assignmentKey), checked }));
+}
+
+export function loadGradeLevel() {
+  try {
+    const saved = localStorage.getItem(GRADE_LEVEL_KEY);
+    return typeof saved === 'string' && saved ? saved : 'simple';
+  } catch {
+    return 'simple';
+  }
+}
+
+export function saveGradeLevel(level) {
+  localStorage.setItem(GRADE_LEVEL_KEY, level);
 }

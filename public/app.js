@@ -1,4 +1,4 @@
-import { loadFocusProgress, loadRequirementChecks, loadSavedExplanations, loadStepChecks, saveExplanation, saveFocusProgress, saveRequirementChecks, saveStepChecks } from './storage.js';
+import { loadFocusProgress, loadGradeLevel, loadRequirementChecks, loadSavedExplanations, loadStepChecks, saveExplanation, saveFocusProgress, saveGradeLevel, saveRequirementChecks, saveStepChecks } from './storage.js';
 
 const instructionsInput = document.querySelector('#instructions');
 const explainButton = document.querySelector('#explain-button');
@@ -11,6 +11,9 @@ const loadingNote = document.querySelector('#loading-note');
 const resultContent = document.querySelector('#result-content');
 const completionStatus = document.querySelector('#completion-status');
 const simplerResultNote = document.querySelector('#simpler-result-note');
+const gradeLevelStatus = document.querySelector('#grade-level-status');
+const gradeLevelLabel = document.querySelector('#grade-level-label');
+const gradeUpdateButton = document.querySelector('#grade-update-button');
 const stepProgress = document.querySelector('#step-progress');
 const stepProgressLabel = document.querySelector('#step-progress-label');
 const stepProgressPercent = document.querySelector('#step-progress-percent');
@@ -57,6 +60,7 @@ const definitionWord = document.querySelector('#definition-word');
 const definitionText = document.querySelector('#definition-text');
 const definitionContext = document.querySelector('#definition-context');
 const definitionClose = document.querySelector('#definition-close');
+const gradeLevelSelect = document.querySelector('#grade-level');
 let lastDefinitionTrigger = null;
 
 const EXAMPLES = {
@@ -139,6 +143,29 @@ let currentAssignment = '';
 let hasSavedFocusProgress = false;
 let explanationRequestId = 0;
 let loadingMessageTimer = null;
+let generatedGradeLevel = 'simple';
+
+const VALID_GRADE_LEVELS = new Set(['simple', 'grade-5', 'grade-6', 'grade-7', 'grade-8', 'grade-9', 'grade-10', 'grade-11', 'grade-12']);
+function getGradeLevel() {
+  return VALID_GRADE_LEVELS.has(gradeLevelSelect?.value) ? gradeLevelSelect.value : 'simple';
+}
+
+function gradeLevelLabelText(level) {
+  if (level === 'simple') return 'Simple-language explanation';
+  return `${level.replace('grade-', '')}th-grade explanation`.replace('1th-', '1st-').replace('2th-', '2nd-').replace('3th-', '3rd-');
+}
+
+function updateGradeLevelStatus() {
+  if (!gradeLevelStatus || !gradeLevelLabel) return;
+  const hasExplanation = Boolean(latestResult && typeof latestResult !== 'string' && latestResult.responseType !== 'refusal' && currentAssignment);
+  gradeLevelStatus.hidden = !hasExplanation;
+  if (!hasExplanation) return;
+  gradeLevelLabel.textContent = gradeLevelLabelText(generatedGradeLevel);
+  const needsUpdate = getGradeLevel() !== generatedGradeLevel;
+  gradeUpdateButton.hidden = !needsUpdate;
+  gradeUpdateButton.disabled = isLoading;
+  gradeLevelStatus.classList.toggle('needs-update', needsUpdate);
+}
 
 function closeDefinition({ restoreFocus = true } = {}) {
   definitionCard.hidden = true;
@@ -250,6 +277,8 @@ function resetDisplayedResult() {
   resultActions.hidden = true;
   completionStatus.hidden = true;
   simplerResultNote.hidden = true;
+  gradeLevelStatus.hidden = true;
+  gradeUpdateButton.hidden = true;
   stepProgress.hidden = true;
   focusPanel.hidden = true;
   teacherReminder.hidden = true;
@@ -529,6 +558,7 @@ function showResult(result, isError = false) {
     vocabularyHelp.hidden = true;
     vocabularyChips.replaceChildren();
     closeDefinition({ restoreFocus: false });
+    gradeLevelStatus.hidden = true;
     return;
   }
   if (isRefusal) {
@@ -538,6 +568,7 @@ function showResult(result, isError = false) {
     vocabularyHelp.hidden = true;
     vocabularyChips.replaceChildren();
     closeDefinition({ restoreFocus: false });
+    gradeLevelStatus.hidden = true;
     return;
   }
   currentSteps = Array.isArray(result.steps) ? result.steps : [];
@@ -555,6 +586,7 @@ function showResult(result, isError = false) {
   vocabHint.hidden = !resultContent.querySelector('.vocab-word');
   renderVocabularyHelp();
   closeDefinition({ restoreFocus: false });
+  updateGradeLevelStatus();
   stepProgress.hidden = currentSteps.length === 0;
   focusButton.hidden = currentSteps.length === 0;
   updateStepProgress();
@@ -649,10 +681,11 @@ simplifyButton.addEventListener('click', async () => {
   simplifyButton.textContent = 'Simplifying…';
   simplifyStatus.textContent = '';
   try {
-    const response = await fetch('/api/explain-simply', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ instructions: currentAssignment }) });
+    const response = await fetch('/api/explain-simply', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ instructions: currentAssignment, gradeLevel: getGradeLevel() }) });
     const data = await response.json();
     if (!response.ok) throw new Error(typeof data.error === 'string' ? data.error : data.error?.message || 'Something went wrong.');
     latestResult = data.result;
+    generatedGradeLevel = getGradeLevel();
     showResult(latestResult);
   } catch (error) {
     simplifyStatus.textContent = `I couldn't simplify that right now. ${error.message}`;
@@ -682,7 +715,8 @@ explainButton.addEventListener('click', async () => {
   resultLoading.hidden = false;
   startLoadingMessages();
   try {
-    const response = await fetch('/api/explain', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ instructions }) });
+    const gradeLevel = getGradeLevel();
+    const response = await fetch('/api/explain', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ instructions, gradeLevel }) });
     const data = await response.json();
     if (!response.ok) throw new Error(typeof data.error === 'string' ? data.error : data.error?.message || 'Something went wrong.');
     if (requestId !== explanationRequestId) return;
@@ -691,7 +725,7 @@ explainButton.addEventListener('click', async () => {
     currentAssignment = instructions;
     showResult(data.result);
     if (data.result.responseType !== 'refusal') {
-      saveExplanation({ instructions, result: data.result, savedAt: new Date().toISOString() });
+      saveExplanation({ instructions, gradeLevel, result: data.result, savedAt: new Date().toISOString() });
       savedLabel.textContent = 'Saved on this device';
     } else {
       savedLabel.textContent = 'Not saved';
@@ -708,13 +742,51 @@ explainButton.addEventListener('click', async () => {
   }
 });
 
+async function updateExplanationForGrade() {
+  if (isLoading || !currentAssignment || !latestResult || typeof latestResult === 'string' || latestResult.responseType === 'refusal') return;
+  const instructions = currentAssignment;
+  const gradeLevel = getGradeLevel();
+  isLoading = true;
+  gradeUpdateButton.disabled = true;
+  gradeUpdateButton.textContent = 'Updating…';
+  try {
+    const response = await fetch('/api/explain', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ instructions, gradeLevel }) });
+    const data = await response.json();
+    if (!response.ok) throw new Error(typeof data.error === 'string' ? data.error : data.error?.message || 'Something went wrong.');
+    latestResult = data.result;
+    originalResult = data.result;
+    generatedGradeLevel = gradeLevel;
+    showResult(data.result);
+    saveExplanation({ instructions, gradeLevel, result: data.result, savedAt: new Date().toISOString() });
+    savedLabel.textContent = 'Saved on this device';
+  } catch (error) {
+    gradeLevelLabel.textContent = `${gradeLevelLabelText(generatedGradeLevel)} · Update failed. Your previous explanation is still here.`;
+  } finally {
+    isLoading = false;
+    gradeUpdateButton.textContent = 'Update explanation';
+    updateGradeLevelStatus();
+    updateCount();
+  }
+}
+
+gradeUpdateButton?.addEventListener('click', updateExplanationForGrade);
+
+gradeLevelSelect?.addEventListener('change', () => saveGradeLevel(getGradeLevel()));
+gradeLevelSelect?.addEventListener('change', updateGradeLevelStatus);
+
 const savedItems = loadSavedExplanations();
+if (gradeLevelSelect) gradeLevelSelect.value = loadGradeLevel();
 const latestSaved = savedItems.find((item) => !item.sample);
 if (latestSaved) {
   instructionsInput.value = latestSaved.instructions;
   currentAssignment = latestSaved.instructions;
   latestResult = latestSaved.result;
   originalResult = latestSaved.result;
+  generatedGradeLevel = VALID_GRADE_LEVELS.has(latestSaved.gradeLevel) ? latestSaved.gradeLevel : 'simple';
+  if (gradeLevelSelect && VALID_GRADE_LEVELS.has(latestSaved.gradeLevel)) {
+    gradeLevelSelect.value = latestSaved.gradeLevel;
+    saveGradeLevel(latestSaved.gradeLevel);
+  }
   showResult(latestSaved.result);
   savedLabel.textContent = 'Saved on this device';
 }

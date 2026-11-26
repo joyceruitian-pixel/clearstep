@@ -36,6 +36,9 @@ body::before { content: ""; position: fixed; inset: 0; pointer-events: none; opa
 .result-actions { display: flex; align-items: center; gap: 10px; margin-top: 18px; }.result-actions .secondary-button { padding: 9px 12px; font-size: .72rem; }.result-actions span { color: #548b7a; font-size: .73rem; font-weight: 700; }
 .focus-panel { margin-top: 16px; padding: 20px; border: 1px solid #b9d7d1; border-radius: 14px; background: linear-gradient(135deg, #f3faf7, #fffdf8); }.focus-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }.focus-kicker { color: var(--teal); font-size: .68rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }.focus-header h3, .focus-resume h3 { margin: 5px 0 0; font-size: 1.15rem; }.link-button { padding: 0; border: 0; color: var(--teal); background: transparent; font: 700 .72rem inherit; cursor: pointer; }.link-button:hover { text-decoration: underline; }.focus-progress { height: 7px; margin: 18px 0 7px; overflow: hidden; border-radius: 99px; background: #dcebe5; }.focus-progress span { display: block; height: 100%; border-radius: inherit; background: var(--teal); transition: width .2s ease; }.focus-progress-label { margin: 0 0 14px; color: var(--muted); font-size: .72rem; }.focus-step { min-height: 75px; margin: 0; padding: 18px; border-radius: 10px; color: var(--ink); background: white; font-size: 1rem; line-height: 1.55; }.focus-controls, .resume-actions { display: flex; justify-content: space-between; gap: 8px; margin-top: 16px; }.focus-note, .focus-resume p { margin: 14px 0 0; color: var(--muted); font-size: .72rem; }.focus-resume { padding: 8px 4px; }.requirement-list { display: grid; gap: 8px; padding: 0; list-style: none; }.requirement-list label { display: flex; align-items: flex-start; gap: 9px; line-height: 1.45; cursor: pointer; }.requirement-list input { width: 17px; height: 17px; flex: 0 0 auto; margin-top: 2px; accent-color: var(--teal); }
 .completion-status { margin: -5px 0 14px; color: #397b68; font-size: .78rem; font-weight: 800; }
+.grade-level-status { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: -4px 0 14px; padding: 8px 10px; border: 1px solid #d9e1f0; border-radius: 9px; color: #46627d; background: #f4f7fc; font-size: .7rem; font-weight: 800; }
+.grade-level-status .secondary-button { flex: 0 0 auto; padding: 7px 9px; font-size: .68rem; }
+@media (max-width: 620px) { .grade-level-status { align-items: flex-start; flex-direction: column; }.grade-level-status .secondary-button { width: 100%; } }
 :focus-visible { outline: 3px solid #d08b25; outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .001ms !important; } }
 @media (min-width: 701px) { .hero h1 { font-size: clamp(3.2rem, 7vw, 5.15rem); } }
@@ -135,6 +138,16 @@ footer { max-width: 1240px; padding: 25px 34px 34px; }
 .privacy-details-content ul { margin: 5px 0 6px; padding-left: 19px; }
 .privacy-details-content li { padding: 2px 0; line-height: 1.45; }
 @media (max-width: 620px) { .privacy-reminder { padding: 12px; }.privacy-reminder p, .privacy-details, .privacy-details-content p { font-size: .72rem; } }
+
+/* Optional explanation-level preference. */
+.grade-picker { display: grid; grid-template-columns: minmax(0, 1fr) minmax(210px, 270px); align-items: center; gap: 4px 14px; margin: 0 0 14px; padding: 12px 14px; border: 1px solid #d8e6e1; border-radius: 13px; background: #f8fcfa; }
+.grade-picker legend { grid-column: 1; padding: 0; color: var(--teal-dark); font-size: .84rem; font-weight: 850; }
+.grade-picker legend span { margin-right: 5px; }
+.grade-picker p { grid-column: 1; margin: 0; color: var(--muted); font-size: .7rem; line-height: 1.4; }
+.grade-picker select { grid-column: 2; grid-row: 1 / span 2; width: 100%; min-height: 40px; padding: 9px 31px 9px 11px; border: 1px solid #afd3c9; border-radius: 9px; color: var(--teal-dark); background: white; font: 750 .76rem inherit; cursor: pointer; }
+.grade-picker select:hover { border-color: var(--teal); background: var(--mint); }
+.grade-picker select:focus-visible { outline: 3px solid #d08b25; outline-offset: 2px; }
+@media (max-width: 620px) { .grade-picker { grid-template-columns: 1fr; gap: 5px; }.grade-picker legend, .grade-picker p, .grade-picker select { grid-column: 1; grid-row: auto; }.grade-picker select { margin-top: 4px; } }
 
 /* Teacher-first result reminder and original-directions comparison. */
 .teacher-reminder { display: flex; align-items: flex-start; gap: 12px; margin-top: 18px; padding: 14px; border: 1px solid #e3d7b8; border-radius: 13px; background: #fff8e8; }
