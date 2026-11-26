@@ -30,6 +30,13 @@ const stepProgressMessage = document.querySelector('#step-progress-message');
 const resultActions = document.querySelector('#result-actions');
 const copyButton = document.querySelector('#copy-button');
 const copyStatus = document.querySelector('#copy-status');
+const copyNotesDialog = document.querySelector('#copy-notes-dialog');
+const copyNotesClose = document.querySelector('#copy-notes-close');
+const copyNotesPreview = document.querySelector('#copy-notes-preview');
+const copyNotesAction = document.querySelector('#copy-notes-action');
+const copyNotesStatus = document.querySelector('#copy-notes-status');
+const copyFormatInputs = document.querySelectorAll('input[name="copy-format"]');
+const focusCopyButton = document.querySelector('#focus-copy-button');
 const simplifyButton = document.querySelector('#simplify-button');
 const restoreButton = document.querySelector('#restore-button');
 const simplifyStatus = document.querySelector('#simplify-status');
@@ -154,6 +161,7 @@ let loadingMessageTimer = null;
 let generatedGradeLevel = 'simple';
 let submissionChecklistItems = [];
 let submissionChecks = [];
+let copyDialogOpener = null;
 
 const VALID_GRADE_LEVELS = new Set(['simple', 'grade-5', 'grade-6', 'grade-7', 'grade-8', 'grade-9', 'grade-10', 'grade-11', 'grade-12']);
 function getGradeLevel() {
@@ -355,6 +363,8 @@ function stopLoadingMessages() {
 
 function resetDisplayedResult() {
   stopLoadingMessages();
+  if (copyNotesDialog?.open) copyNotesDialog.close();
+  copyNotesDialog?.classList.remove('is-open');
   explanationRequestId += 1;
   isLoading = false;
   latestResult = null;
@@ -394,6 +404,9 @@ function resetDisplayedResult() {
   focusResume.hidden = true;
   focusContent.hidden = false;
   copyStatus.textContent = '';
+  copyNotesStatus.textContent = '';
+  copyFormat = 'numbered';
+  copyFormatInputs.forEach((input) => { input.checked = input.value === 'numbered'; });
   simplifyStatus.textContent = '';
 }
 
@@ -707,17 +720,86 @@ document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') closeDefinition();
 });
 
+let copyFormat = 'numbered';
+
+function currentCopySteps() {
+  return Array.isArray(currentSteps) ? currentSteps.filter((step) => typeof step === 'string' && step.trim()) : [];
+}
+
+function numberedStepsText(steps = currentCopySteps()) {
+  return steps.map((step, index) => `${index + 1}. ${step.trim()}`).join('\n');
+}
+
+function checklistStepsText(steps = currentCopySteps()) {
+  return steps.map((step, index) => `${stepChecks.includes(index) ? '☑' : '☐'} ${step.trim()}`).join('\n');
+}
+
+function completePlanText(result = latestResult) {
+  if (!result || typeof result === 'string' || result.responseType === 'refusal') return '';
+  const summary = typeof result.summary === 'string' && result.summary.trim() ? result.summary.trim() : 'Review the assignment directions and follow the steps below.';
+  const lines = ['MY HOMEWORK PLAN', '', 'ASSIGNMENT SUMMARY', summary, '', 'STEPS TO FOLLOW', numberedStepsText()];
+  const checklist = normalizedSubmissionData(result);
+  if (checklist.items.length) lines.push('', 'WHAT TO TURN IN', ...checklist.items.map((item) => `- ${item}`));
+  if (checklist.info.deadline) lines.push('', 'DUE DATE', checklist.info.deadline);
+  if (checklist.info.method) lines.push('', 'SUBMISSION', checklist.info.method);
+  if (checklist.unclear.length) lines.push('', 'CHECK WITH YOUR TEACHER', ...checklist.unclear.map((item) => `- ${item}`));
+  lines.push('', 'REMINDER', "Double-check your teacher's original directions before submitting.");
+  return lines.join('\n');
+}
+
+function copyTextForFormat(format = copyFormat) {
+  if (format === 'checklist') return checklistStepsText();
+  if (format === 'plan') return completePlanText();
+  return numberedStepsText();
+}
+
+function updateCopyPreview() {
+  if (!copyNotesPreview) return;
+  copyNotesPreview.textContent = copyTextForFormat();
+}
+
+function openCopyNotes(event) {
+  if (!latestResult || typeof latestResult === 'string' || latestResult.responseType === 'refusal' || !currentCopySteps().length) return;
+  copyDialogOpener = event?.currentTarget || copyButton;
+  copyNotesStatus.textContent = '';
+  updateCopyPreview();
+  if (typeof copyNotesDialog.showModal === 'function') copyNotesDialog.showModal();
+  else { copyNotesDialog.setAttribute('open', ''); copyNotesDialog.classList.add('is-open'); }
+  copyNotesAction.focus();
+}
+
+function closeCopyNotes() {
+  if (copyNotesDialog.open && typeof copyNotesDialog.close === 'function') copyNotesDialog.close();
+  else { copyNotesDialog.removeAttribute('open'); copyNotesDialog.classList.remove('is-open'); }
+  (copyDialogOpener?.isConnected ? copyDialogOpener : copyButton).focus();
+}
+
+function fallbackCopy(text) {
+  const helper = document.createElement('textarea');
+  helper.value = text;
+  helper.setAttribute('readonly', '');
+  helper.style.position = 'fixed';
+  helper.style.opacity = '0';
+  document.body.appendChild(helper);
+  helper.select();
+  let copied = false;
+  try { copied = document.execCommand('copy'); } catch { copied = false; }
+  helper.remove();
+  return copied;
+}
+
+async function copyToClipboard(text) {
+  if (!text) return false;
+  if (navigator.clipboard?.writeText) {
+    try { await navigator.clipboard.writeText(text); return true; } catch {}
+  }
+  return fallbackCopy(text);
+}
+
 function resultToText(result) {
   if (typeof result === 'string') return result;
   if (result.responseType === 'refusal') return `${result.summary}\n\n${result.suggestion}`;
-  const lines = [`What your assignment means: ${result.summary}`, '', 'Steps to follow:', ...result.steps.map((step, index) => `${index + 1}. ${step}`)];
-  if (result.importantRequirements.length) lines.push('', 'Important requirements:', ...result.importantRequirements.map((item) => `- ${item}`));
-  if (result.missingInformation.length) lines.push('', 'Things to ask your teacher:', ...result.missingInformation.map((item) => `- ${item}`));
-  const checklist = normalizedSubmissionData(result);
-  if (checklist.items.length) lines.push('', 'What to turn in:', ...checklist.items.map((item) => `- ${item}`));
-  if (checklist.info.deadline) lines.push(`Due: ${checklist.info.deadline}`);
-  if (checklist.info.method) lines.push(`Submit: ${checklist.info.method}`);
-  return lines.join('\n');
+  return completePlanText(result);
 }
 
 instructionsInput.addEventListener('input', () => {
@@ -780,13 +862,23 @@ focusComplete.addEventListener('click', () => {
   const index = focusProgress.index;
   setStepCompleted(index, !stepChecks.includes(index));
 });
-copyButton.addEventListener('click', async () => {
-  const text = resultToText(latestResult);
-  try {
-    await navigator.clipboard.writeText(text);
-    copyStatus.textContent = 'Copied!';
-  } catch {
-    copyStatus.textContent = 'Copy did not work. You can select the explanation instead.';
+copyButton.addEventListener('click', openCopyNotes);
+focusCopyButton.addEventListener('click', openCopyNotes);
+copyNotesClose.addEventListener('click', closeCopyNotes);
+copyNotesDialog.addEventListener('cancel', (event) => { event.preventDefault(); closeCopyNotes(); });
+copyFormatInputs.forEach((input) => input.addEventListener('change', () => {
+  copyFormat = input.value;
+  updateCopyPreview();
+  copyNotesStatus.textContent = '';
+}));
+copyNotesAction.addEventListener('click', async () => {
+  const copied = await copyToClipboard(copyTextForFormat());
+  if (copied) {
+    copyNotesStatus.textContent = 'Copied to clipboard! Your homework is ready to paste.';
+    copyNotesAction.textContent = '✓ Copied';
+    window.setTimeout(() => { copyNotesAction.textContent = 'Copy to clipboard'; }, 1800);
+  } else {
+    copyNotesStatus.textContent = "Couldn't copy automatically. Select the preview above and copy it manually.";
   }
 });
 simplifyButton.addEventListener('click', async () => {

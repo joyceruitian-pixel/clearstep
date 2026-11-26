@@ -153,3 +153,11 @@ Then open http://localhost:3000 in your browser.
 - Test the wording with more middle school students.
 - Add a printable explanation for a student’s video demonstration.
 - Replace localStorage with a real database after the first version is tested.
+
+## Other Task 8 — Copy to Notes
+
+- Reworked the existing copy action into an accessible Copy to Notes dialog with three plain-text formats: numbered steps, checklist symbols, and a complete homework plan.
+- The preview and clipboard text use the same formatters, so the visible preview matches what is copied. The complete plan uses the current explanation, steps, explicit checklist requirements, deadline, submission method, and teacher reminder without making up missing details.
+- Copying uses the browser Clipboard API after a button press, then a local textarea fallback. If both methods fail, the dialog tells the student to select the preview and copy it manually.
+- The dialog supports keyboard dismissal with Escape, visible focus states, screen-reader status text, a scrollable preview, and narrow-screen layout. Focus Mode can open the same Copy to Notes dialog without changing the current step.
+- Actual browser checks verified all three previews, a successful clipboard confirmation, Focus Mode access, and unchanged step/submission progress. Broader mobile, permission-failure, and long-assignment cases remain documented as not tested in `OTHER_TASK_8_TEST_RESULTS.md`.
